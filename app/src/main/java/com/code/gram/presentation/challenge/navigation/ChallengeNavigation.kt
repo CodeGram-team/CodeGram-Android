@@ -1,30 +1,30 @@
-package com.code.gram.presentation.post.navigation
+package com.code.gram.presentation.challenge.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.code.gram.presentation.post.PostRoute
+import com.code.gram.presentation.auth.SignInRoute
 import com.example.makersassignment.core.navigation.MainTabRoute
 import kotlinx.serialization.Serializable
 
-fun NavController.navigatePost(
-    navOptions: NavOptions?,
+fun NavController.navigateChallenge(
+    navOptions: NavOptions?
 ) {
-    navigate(Post, navOptions)
+    navigate(Challenge, navOptions)
 }
 
-fun NavGraphBuilder.postGraph(
+fun NavGraphBuilder.challengeGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
 ) {
-    composable<Post> {
-        PostRoute(
+    composable<Challenge> {
+        SignInRoute(
             paddingValues = paddingValues,
         )
     }
 }
 
 @Serializable
-data object Post : MainTabRoute
+data object Challenge : MainTabRoute

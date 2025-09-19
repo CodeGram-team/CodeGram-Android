@@ -3,14 +3,13 @@ package com.code.gram.presentation.main
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import com.example.makersassignment.R
-import com.example.makersassignment.core.navigation.MainTabRoute
-import com.example.makersassignment.core.navigation.Route
+import com.code.gram.R
+import com.code.gram.presentation.challenge.navigation.Challenge
 import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.mypage.navigation.MyPage
-import kotlin.collections.any
-import kotlin.collections.find
-import kotlin.collections.map
+import com.code.gram.presentation.post.navigation.Post
+import com.example.makersassignment.core.navigation.MainTabRoute
+import com.example.makersassignment.core.navigation.Route
 
 enum class MainTab(
     @param:DrawableRes val selectedIcon: Int,
@@ -19,15 +18,29 @@ enum class MainTab(
     val route: MainTabRoute,
 ) {
     HOME(
-        selectedIcon = R.drawable.ic_home_fill,
-        unselectedIcon = R.drawable.ic_home_linear,
+        selectedIcon = R.drawable.ic_home,
+        unselectedIcon = R.drawable.ic_home_filled,
         contentDescription = R.string.ic_home_description,
         route = Home,
     ),
 
+    CHANLLENGE(
+        selectedIcon = R.drawable.ic_challenge,
+        unselectedIcon = R.drawable.ic_challenge_filled,
+        contentDescription = R.string.ic_challenge_description,
+        route = Challenge,
+    ),
+
+    POST(
+        selectedIcon = R.drawable.ic_add,
+        unselectedIcon = R.drawable.ic_add_filled,
+        contentDescription = R.string.ic_post_description,
+        route = Post,
+    ),
+
     MYPAGE(
-        selectedIcon = R.drawable.ic_mypage_fill,
-        unselectedIcon = R.drawable.ic_mypage_linear,
+        selectedIcon = R.drawable.ic_person,
+        unselectedIcon = R.drawable.ic_person_filled,
         contentDescription = R.string.ic_mypage_description,
         route = MyPage,
     );

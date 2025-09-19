@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import com.code.gram.presentation.auth.navigation.authGraph
+import com.code.gram.presentation.challenge.navigation.challengeGraph
 import com.code.gram.presentation.home.navigation.homeGraph
 import com.code.gram.presentation.main.component.MainBottomBar
 import com.code.gram.presentation.mypage.navigation.myPageGraph
+import com.code.gram.presentation.post.navigation.postGraph
 import kotlinx.collections.immutable.toPersistentList
 
 private const val EXIT_MILLIS = 3000L
@@ -98,6 +100,16 @@ fun MainScreen(
 
             homeGraph(
                 paddingValues = innerPadding,
+            )
+
+            challengeGraph(
+                paddingValues = innerPadding,
+                navigateUp = navigator::navigateUp,
+            )
+
+            postGraph(
+                paddingValues = innerPadding,
+                navigateUp = navigator::navigateUp,
             )
 
             myPageGraph(
