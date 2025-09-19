@@ -1,4 +1,4 @@
-package com.code.gram.ui.theme
+package com.code.gram.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
