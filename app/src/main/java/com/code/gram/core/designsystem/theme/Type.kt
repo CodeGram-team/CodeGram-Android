@@ -1,4 +1,4 @@
-package com.code.gram.ui.theme
+package com.code.gram.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
