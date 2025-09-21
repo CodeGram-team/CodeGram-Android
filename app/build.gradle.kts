@@ -29,6 +29,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", properties["GOOGLE_WEB_CLIENT_ID"].toString())
     }
 
     buildTypes {
@@ -79,4 +80,9 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(libs.timber)
+
+    //구글
+    implementation(libs.androidx.credentials)
+    implementation(libs.googleid)
+    implementation(libs.androidx.credentials.play.services.auth)
 }
