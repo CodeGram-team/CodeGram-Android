@@ -12,7 +12,8 @@ fun NavGraphBuilder.authGraph(
 ) {
     composable<Auth> {
         SignInRoute(
-
+            navigateUp = navigateUp,
+            navigateHome = navigateHome
         )
     }
 }
