@@ -3,7 +3,6 @@ package com.code.gram.presentation.main.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.code.gram.core.designsystem.theme.PrimaryBlue
+import com.code.gram.core.designsystem.theme.TextSecondary
 import com.code.gram.presentation.main.MainTab
 import com.example.makersassignment.core.common.extension.noRippleClickable
 import kotlinx.collections.immutable.ImmutableList
@@ -66,6 +68,11 @@ fun MainBottomBarTab(
     modifier: Modifier = Modifier
 ) {
     val iconRes = if (isSelected) tab.selectedIcon else tab.unselectedIcon
+    val contentColor = if (isSelected) {
+        PrimaryBlue
+    } else {
+        TextSecondary
+    }
 
     Column (
         modifier = modifier
@@ -74,16 +81,18 @@ fun MainBottomBarTab(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
+        Icon(
             imageVector = ImageVector.vectorResource(iconRes),
-            contentDescription = tab.contentDescription.toString()
+            contentDescription = tab.contentDescription.toString(),
+            tint = contentColor
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
             text = stringResource(tab.contentDescription),
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor
         )
     }
 }

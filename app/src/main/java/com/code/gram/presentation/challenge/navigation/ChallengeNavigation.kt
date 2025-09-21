@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.code.gram.presentation.auth.SignInRoute
+import com.code.gram.presentation.challenge.ChallengeRoute
 import com.example.makersassignment.core.navigation.MainTabRoute
 import kotlinx.serialization.Serializable
 
@@ -20,7 +21,7 @@ fun NavGraphBuilder.challengeGraph(
     navigateUp: () -> Unit,
 ) {
     composable<Challenge> {
-        SignInRoute(
+        ChallengeRoute(
             paddingValues = paddingValues,
         )
     }
