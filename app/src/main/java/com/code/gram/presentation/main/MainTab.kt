@@ -33,7 +33,7 @@ enum class MainTab(
 
     POST(
         selectedIcon = R.drawable.ic_add,
-        unselectedIcon = R.drawable.ic_add_filled,
+        unselectedIcon = R.drawable.ic_add,
         contentDescription = R.string.ic_post_description,
         route = Post,
     ),
