@@ -36,6 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Timber.e("signupImplfail, $loginEntity")
                 tokenManager.saveAccessToken(loginEntity.accessToken)
                 tokenManager.saveRefreshToken(loginEntity.refreshToken)
+                tokenManager.saveSignUpToken(loginEntity.signupToken)
                 loginEntity
             }
         } else {
