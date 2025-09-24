@@ -14,7 +14,7 @@ class TokenManager @Inject constructor(
     // DataStore에 토큰을 저장할 때 사용할 키
     private val accessTokenKey = stringPreferencesKey("access_token")
     private val refreshTokenKey = stringPreferencesKey("refresh_token")
-
+    private val signupTokenKey = stringPreferencesKey("signup_token")
     /**
      * DataStore에서 Access Token을 Flow 형태로 가져옵니다.
      */
@@ -42,6 +42,18 @@ class TokenManager @Inject constructor(
     suspend fun saveRefreshToken(token: String) {
         dataStore.edit { preferences ->
             preferences[refreshTokenKey] = token
+        }
+    }
+
+    suspend fun saveSignUpToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[signupTokenKey] = token
+        }
+    }
+
+    fun getSignUpToken(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[signupTokenKey]
         }
     }
 }
