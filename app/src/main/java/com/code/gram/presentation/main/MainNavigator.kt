@@ -8,8 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.code.gram.presentation.auth.navigation.Auth
 import com.code.gram.presentation.challenge.navigation.navigateChallenge
+import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.home.navigation.navigateHome
 import com.code.gram.presentation.mypage.navigation.navigateMyPage
 import com.code.gram.presentation.post.navigation.navigatePost
@@ -21,7 +21,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Auth
+    val startDestination = Home
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->

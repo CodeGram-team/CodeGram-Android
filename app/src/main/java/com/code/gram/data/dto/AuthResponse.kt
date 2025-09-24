@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AuthResponse(
     @SerialName("status")
-    val status: String,
+    val status: String = "",
     @SerialName("access_token")
     val accessToken: String = "",
     @SerialName("refresh_token")
     val refreshToken: String = "",
     @SerialName("signup_token")
-    val signupToken: String,
+    val signupToken: String = "",
     @SerialName("token_type")
     val tokenType: String
 ) {

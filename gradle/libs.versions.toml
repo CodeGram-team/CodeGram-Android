@@ -1,5 +1,6 @@
 [versions]
 # Test
+composeCodeEditor = "1.0.3"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -46,6 +47,7 @@ googleid = "1.1.1"
 credentials = "1.5.0"
 
 [libraries]
+compose-code-editor = { module = "io.github.qawaz:compose-code-editor", version.ref = "composeCodeEditor" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
