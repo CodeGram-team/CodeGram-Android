@@ -4,4 +4,5 @@
     <string name="ic_mypage_description">my page</string>
     <string name="ic_post_description">post</string>
     <string name="ic_challenge_description">challenge</string>
+    <string name="ic_search_description">search</string>
 </resources>

@@ -8,8 +8,10 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +27,7 @@ import com.code.gram.presentation.home.navigation.homeGraph
 import com.code.gram.presentation.main.component.MainBottomBar
 import com.code.gram.presentation.mypage.navigation.myPageGraph
 import com.code.gram.presentation.post.navigation.postGraph
+import com.code.gram.presentation.search.navigation.searchGraph
 import kotlinx.collections.immutable.toPersistentList
 
 private const val EXIT_MILLIS = 3000L
@@ -62,6 +65,7 @@ fun MainScreen(
             )
         },
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
             .fillMaxSize()
     ) { innerPadding ->
@@ -102,6 +106,11 @@ fun MainScreen(
                 paddingValues = innerPadding,
             )
 
+            searchGraph(
+                paddingValues = innerPadding,
+                navigateUp = navigator::navigateUp,
+            )
+
             challengeGraph(
                 paddingValues = innerPadding,
                 navigateUp = navigator::navigateUp,
@@ -115,8 +124,6 @@ fun MainScreen(
             myPageGraph(
                 paddingValues = innerPadding
             )
-
-
         }
     }
 }

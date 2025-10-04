@@ -28,7 +28,9 @@ fun CommonTextField(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     isPasswordVisible: Boolean = false,
+    placeHolder: String = "닉네임을 작성해주세요",
     suffix: (@Composable () -> Unit)? = null,
+    prefix: (@Composable () -> Unit)? = null,
 ) {
     BasicTextField(
         value = text,
@@ -44,6 +46,8 @@ fun CommonTextField(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                prefix?.invoke()
+
                 Box(
                     modifier = Modifier
                         .weight(1f),
@@ -51,7 +55,7 @@ fun CommonTextField(
                 ) {
                     if (text.isEmpty()) {
                         Text(
-                            text = "닉네임을 작성해주세요",
+                            text = placeHolder,
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold
                         )

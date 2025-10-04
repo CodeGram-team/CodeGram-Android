@@ -81,6 +81,8 @@ fun MainBottomBarTab(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(4.dp))
+
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = tab.contentDescription.toString(),
@@ -89,11 +91,13 @@ fun MainBottomBarTab(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        /*Spacer(modifier = Modifier.height(4.dp))
+
         Text(
             text = stringResource(tab.contentDescription),
             style = MaterialTheme.typography.labelSmall,
             color = contentColor
-        )
+        )*/
     }
 }
 

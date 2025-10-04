@@ -46,7 +46,7 @@ fun CodeGramTopBar(
 
         Row {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.baseline_search_24),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_search),
                 contentDescription = null,
                 tint = TextTertiary
             )

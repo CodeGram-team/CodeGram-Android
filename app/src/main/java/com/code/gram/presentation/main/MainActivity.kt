@@ -5,6 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import com.code.gram.core.designsystem.theme.CodeGramTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,10 +23,21 @@ class MainActivity : ComponentActivity() {
                 android.graphics.Color.TRANSPARENT,
                 android.graphics.Color.TRANSPARENT
             ),
+            navigationBarStyle = SystemBarStyle.light(
+                android.graphics.Color.TRANSPARENT,
+                android.graphics.Color.TRANSPARENT
+            )
         )
         setContent {
-            CodeGramTheme(darkTheme = false) {
-                MainScreen()
+            CodeGramTheme(darkTheme = true) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .safeDrawingPadding()
+                ) {
+                    MainScreen()
+                }
             }
         }
     }

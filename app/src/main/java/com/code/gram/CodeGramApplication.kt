@@ -15,7 +15,7 @@ class CodeGramApplication : Application() {
     }
 
     private fun setDayMode() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     private fun initTimber() {
