@@ -19,6 +19,9 @@ val PrimaryPurple = Color(0xFF764BA2)
 val PrimaryPurpleDark = Color(0xFF6B46C1)
 val PrimaryPurpleLight = Color(0xFFC4B5FD)
 
+val background = Color(0xFF2D2D2D)
+val itemBackground =  Color(0xFF767680)
+
 val SurfaceBackground = Color(0xFFFAFBFC)
 val SurfaceCard = Color(0xFFFFFFFF)
 val SurfaceContainer = Color(0xFFF1F5F9)
