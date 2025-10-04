@@ -80,7 +80,6 @@ fun SignInScreen(
 ) {
     Column (
         modifier = Modifier
-            .background(SurfaceContainer)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
