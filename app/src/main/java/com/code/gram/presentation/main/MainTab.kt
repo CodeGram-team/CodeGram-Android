@@ -8,6 +8,7 @@ import com.code.gram.presentation.challenge.navigation.Challenge
 import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.mypage.navigation.MyPage
 import com.code.gram.presentation.post.navigation.Post
+import com.code.gram.presentation.search.navigation.Search
 import com.example.makersassignment.core.navigation.MainTabRoute
 import com.example.makersassignment.core.navigation.Route
 
@@ -24,11 +25,11 @@ enum class MainTab(
         route = Home,
     ),
 
-    CHANLLENGE(
-        selectedIcon = R.drawable.ic_challenge,
-        unselectedIcon = R.drawable.ic_challenge_filled,
-        contentDescription = R.string.ic_challenge_description,
-        route = Challenge,
+    SEARCH(
+        selectedIcon = R.drawable.ic_search,
+        unselectedIcon = R.drawable.ic_search,
+        contentDescription = R.string.ic_search_description,
+        route = Search,
     ),
 
     POST(
@@ -36,6 +37,13 @@ enum class MainTab(
         unselectedIcon = R.drawable.ic_add,
         contentDescription = R.string.ic_post_description,
         route = Post,
+    ),
+
+    CHANLLENGE(
+        selectedIcon = R.drawable.ic_challenge,
+        unselectedIcon = R.drawable.ic_challenge_filled,
+        contentDescription = R.string.ic_challenge_description,
+        route = Challenge,
     ),
 
     MYPAGE(
