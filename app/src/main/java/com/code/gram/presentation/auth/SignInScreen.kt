@@ -85,15 +85,10 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "환영합니다!",
+            text = "Codegram",
             fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
-        )
-
-        Text(
-            text = " \n안전한 AI 검증 시스템과 함께\n코드를 공유하고 함께 성장해보세요",
-            fontWeight = FontWeight.Thin,
-            fontSize = 16.sp
+            fontSize = 36.sp,
+            color = Color.White
         )
 
         if (!isVisibleNickName) {
