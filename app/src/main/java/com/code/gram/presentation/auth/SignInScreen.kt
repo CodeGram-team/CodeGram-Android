@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +32,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.code.gram.R
+import com.code.gram.core.designsystem.theme.SurfaceCard
 import com.code.gram.core.designsystem.theme.SurfaceContainer
 import com.code.gram.core.designsystem.theme.TextPrimary
 import com.code.gram.core.designsystem.theme.TextTertiary
@@ -97,14 +99,10 @@ fun SignInScreen(
                 onClick = onClickGoogleSignIn,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = TextTertiary,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
+                    .padding(vertical = 8.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = SurfaceContainer,
+                    containerColor = SurfaceCard,
                     contentColor = TextPrimary
                 )
             ) {
@@ -114,9 +112,11 @@ fun SignInScreen(
                     tint = Color.Unspecified
                 )
                 Text(
-                    text = "구글 계정으로 로그인",
+                    text = "Sign In with Google",
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp),
+                    textAlign = TextAlign.Center
                 )
             }
         } else {
