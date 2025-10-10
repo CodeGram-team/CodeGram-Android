@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -68,11 +69,6 @@ fun MainBottomBarTab(
     modifier: Modifier = Modifier
 ) {
     val iconRes = if (isSelected) tab.selectedIcon else tab.unselectedIcon
-    val contentColor = if (isSelected) {
-        PrimaryBlue
-    } else {
-        TextSecondary
-    }
 
     Column (
         modifier = modifier
@@ -86,7 +82,7 @@ fun MainBottomBarTab(
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = tab.contentDescription.toString(),
-            tint = contentColor
+            tint = Color.White
         )
 
         Spacer(modifier = Modifier.height(4.dp))
