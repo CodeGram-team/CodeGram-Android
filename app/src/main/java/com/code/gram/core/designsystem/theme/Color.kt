@@ -14,12 +14,14 @@ val Pink40 = Color(0xFF7D5260)
 val PrimaryBlue = Color(0xFF667EEA)
 val PrimaryBlueDark = Color(0xFF5A67D8)
 val PrimaryBlueLight = Color(0xFFA5B4FC)
+val PrimaryButtonColor = Color(0xFF7C9BFF)
 
 val PrimaryPurple = Color(0xFF764BA2)
 val PrimaryPurpleDark = Color(0xFF6B46C1)
 val PrimaryPurpleLight = Color(0xFFC4B5FD)
 
 val background = Color(0xFF2D2D2D)
+val ContainerBackground = Color(0xFF232427)
 val textFieldBackground = Color(0xFF303237)
 val itemBackground =  Color(0xFF767680)
 
@@ -41,19 +43,19 @@ val CodePythonAccent = Color(0xFF3776AB)
 
 // 성공
 val Success = Color(0xFF36D399)
-val SuccessDark = Color(0xFF303237)
+val SuccessDark = Color(0xFF102F24)
 val SuccessLight = Color(0xFFBAF7D0)
 val SuccessContainer = Color(0xFFECFDF5)
 
 // 경고
-val Warning = Color(0xFFF59E0B)
-val WarningDark = Color(0xFFD97706)
+val Warning = Color(0xFFEAB308)
+val WarningDark = Color(0xFF3A3006)
 val WarningLight = Color(0xFFFEF3C7)
 val WarningContainer = Color(0xFFFFFBEB)
 
 // 오류
 val Error = Color(0xFFEF4444)
-val ErrorDark = Color(0xFFDC2626)
+val ErrorDark = Color(0xFF3A0F12)
 val ErrorLight = Color(0xFFFEE2E2)
 val ErrorContainer = Color(0xFFFEF2F2)
 
