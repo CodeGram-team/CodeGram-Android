@@ -218,7 +218,7 @@ proguard/
 .navigation/
 *.ipr
 *.swp
-
+network_security_config.xml
 # Keystore files
 
 # Google Services (e.g. APIs or Firebase)
