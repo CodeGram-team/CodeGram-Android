@@ -1,6 +1,7 @@
 package com.code.gram.data.di
 
 import com.code.gram.BuildConfig
+import com.code.gram.data.datasource.websocket.WebSocketManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -19,6 +20,9 @@ import kotlin.apply
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    @Provides
+    @Singleton
+    fun provideWebSocketManager(): WebSocketManager = WebSocketManager()
 
     @Provides
     @Singleton

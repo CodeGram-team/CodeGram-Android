@@ -1,6 +1,8 @@
 package com.code.gram.data.di
 
+import com.code.gram.data.service.HomeService
 import com.code.gram.data.service.LoginService
+import com.code.gram.data.service.WebSocketService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,4 +18,15 @@ object ServiceModule {
     @Singleton
     fun LoginService(retrofit: Retrofit): LoginService =
         retrofit.create()
+
+    @Provides
+    @Singleton
+    fun webSocketService(retrofit: Retrofit): WebSocketService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun homeService(retrofit: Retrofit): HomeService =
+        retrofit.create()
+
 }
