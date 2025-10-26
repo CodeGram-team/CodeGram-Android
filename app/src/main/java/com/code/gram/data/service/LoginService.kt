@@ -1,8 +1,8 @@
 package com.code.gram.data.service
 
-import com.code.gram.data.dto.AuthResponse
-import com.code.gram.data.dto.LoginRequestDto
-import com.code.gram.data.dto.SignUpRequestDto
+import com.code.gram.data.dto.response.AuthResponse
+import com.code.gram.data.dto.request.LoginRequestDto
+import com.code.gram.data.dto.request.SignUpRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
