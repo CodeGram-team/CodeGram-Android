@@ -6,11 +6,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.code.gram.core.designsystem.theme.PrimaryBlue
 import com.code.gram.core.designsystem.theme.PrimaryBlueLight
+import com.code.gram.core.designsystem.theme.background
 
 @Composable
 fun CommonChip(
@@ -19,12 +21,12 @@ fun CommonChip(
 ) {
     Surface(
         modifier = modifier,
-        color = PrimaryBlueLight,
+        color = background,
         shape = RoundedCornerShape(16.dp)
     ) {
         Text(
             text = "#$text",
-            color = PrimaryBlue,
+            color = Color.White,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

@@ -27,6 +27,7 @@ fun CommonTextField(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    backgroundColor: Color = Color.Gray,
     isPasswordVisible: Boolean = false,
     placeHolder: String = "닉네임을 작성해주세요",
     suffix: (@Composable () -> Unit)? = null,
@@ -36,7 +37,7 @@ fun CommonTextField(
         value = text,
         onValueChange = onTextChange,
         modifier = modifier
-            .background(color = Color.Gray, shape = RoundedCornerShape(8.dp))
+            .background(color = backgroundColor, shape = RoundedCornerShape(8.dp))
             .padding(12.dp),
         visualTransformation = VisualTransformation.None,
         singleLine = true,
