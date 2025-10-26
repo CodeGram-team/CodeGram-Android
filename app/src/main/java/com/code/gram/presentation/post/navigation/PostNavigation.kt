@@ -22,6 +22,7 @@ fun NavGraphBuilder.postGraph(
     composable<Post> {
         PostRoute(
             paddingValues = paddingValues,
+            navigateUp = navigateUp
         )
     }
 }

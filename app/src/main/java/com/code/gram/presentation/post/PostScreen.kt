@@ -31,10 +31,13 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -72,6 +75,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PostRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     viewModel: PostViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -91,7 +95,12 @@ fun PostRoute(
         onCodeChange = viewModel::updateCode,
         /*onTagAdd = viewModel::addTag,
         onTagRemove = viewModel::removeTag*/
-        onTagChange = viewModel::updateTag
+        onTagChange = viewModel::updateTag,
+        onClickComplete = viewModel::startJob, // Todo : AI 검사는 어떻게 시작?
+        onPostComplete = {
+            navigateUp()
+            viewModel.postComplete()
+        }
     )
 }
 
@@ -106,7 +115,9 @@ fun PostScreen(
     onContentChange : (String) -> Unit,
     onLanguageChange : (CodeLang) -> Unit,
     onCodeChange : (String) -> Unit,
-    onTagChange : (List<String>) -> Unit
+    onTagChange : (List<String>) -> Unit,
+    onClickComplete: () -> Unit,
+    onPostComplete: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isFullScreenEditor by remember { mutableStateOf(false) }
@@ -117,12 +128,13 @@ fun PostScreen(
     if (isFullScreenEditor) {
         FullScreenCodeEditor(
             paddingValues = paddingValues,
-            initialCode = state.code,
+            initialCode = state.post.code,
             parser = parser,
             theme = theme,
-            language = state.language,
+            language = if (state.post.language == "Java") CodeLang.Java else CodeLang.Python,
             onDone = { updatedCode ->
                 onCodeChange(updatedCode)
+                onClickComplete()
                 isFullScreenEditor = false
             },
             onCancel = {
@@ -137,16 +149,37 @@ fun PostScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = "새 게시물",
+            Row (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                textAlign = TextAlign.Center
-            )
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "새 게시물",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                TextButton(
+                    onClick = onPostComplete
+                ) {
+                    Text(
+                        text = "공유",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color(0xFF7C9BFF)
+                    )
+                }
+            }
 
             CodeGramTextField(
-                text = state.title,
+                text = state.post.title,
                 placeholder = "제목을 입력해주세요.",
                 onTextChange = onTitleChange
             )
@@ -154,7 +187,7 @@ fun PostScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             CodeGramTextField(
-                text = state.content,
+                text = state.post.description,
                 placeholder = "내용을 입력해주세요.",
                 type = "content",
                 onTextChange = onContentChange
@@ -180,7 +213,7 @@ fun PostScreen(
                     border = null,
                 ) {
                     Text(
-                        text = state.language.name,
+                        text = state.post.language,
                         modifier = Modifier,
                         color = Color.White
                     )
@@ -262,7 +295,7 @@ fun PostScreen(
             TagEditor(
                 modifier = Modifier
                     .fillMaxWidth(),
-                tags = state.tags,
+                tags = state.post.tags,
                 onTagsChanged = onTagChange
             )
 
