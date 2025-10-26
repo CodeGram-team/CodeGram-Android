@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.code.gram.core.designsystem.theme.background
-import com.example.makersassignment.core.common.extension.noRippleClickable
+import com.code.gram.core.common.extension.noRippleClickable
 import com.wakaztahir.codeeditor.highlight.model.CodeLang
 
 @Composable

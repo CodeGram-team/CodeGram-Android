@@ -1,4 +1,4 @@
-package com.code.gram.data.dto
+package com.code.gram.data.dto.response
 
 import com.code.gram.domain.entity.LoginEntity
 import kotlinx.serialization.SerialName

@@ -1,9 +1,9 @@
 package com.code.gram.data.datasourceimpl
 
 import com.code.gram.data.datasource.AuthRemoteDataSource
-import com.code.gram.data.dto.AuthResponse
-import com.code.gram.data.dto.LoginRequestDto
-import com.code.gram.data.dto.SignUpRequestDto
+import com.code.gram.data.dto.response.AuthResponse
+import com.code.gram.data.dto.request.LoginRequestDto
+import com.code.gram.data.dto.request.SignUpRequestDto
 import com.code.gram.data.service.LoginService
 import retrofit2.Response
 import javax.inject.Inject

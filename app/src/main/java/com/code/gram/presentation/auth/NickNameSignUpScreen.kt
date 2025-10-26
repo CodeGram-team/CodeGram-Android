@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.code.gram.core.designsystem.component.CommonTextField
+import com.code.gram.core.designsystem.theme.textFieldBackground
 
 @Composable
 fun NickNameSignUpScreen(
@@ -24,6 +25,8 @@ fun NickNameSignUpScreen(
             text = nickname,
             onTextChange = onTextChanged,
             modifier = Modifier,
+            placeHolder = "닉네임을 입력해주세요",
+            backgroundColor = textFieldBackground
         )
 
         Spacer(modifier = Modifier.weight(1f))

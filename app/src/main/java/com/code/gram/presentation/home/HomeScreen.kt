@@ -23,6 +23,7 @@ import com.code.gram.core.designsystem.component.CodeGramTopBar
 import com.code.gram.core.designsystem.theme.TextTertiary
 import com.code.gram.presentation.home.component.HomeFeedItem
 import com.code.gram.presentation.home.component.LanguageItem
+import com.example.makersassignment.core.common.util.UiState
 import com.wakaztahir.codeeditor.highlight.prettify.PrettifyParser
 import com.wakaztahir.codeeditor.highlight.theme.CodeTheme
 import com.wakaztahir.codeeditor.highlight.theme.CodeThemeType
@@ -55,19 +56,12 @@ fun HomeScreen(
     Column (
         modifier = Modifier
             .fillMaxSize()
+            .padding(8.dp)
             .padding(paddingValues)
     ) {
         CodeGramTopBar(
             modifier = Modifier
-                .padding(8.dp)
-        )
-
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            thickness = 1.dp,
-            color = TextTertiary
+                .padding(top = 8.dp, bottom = 16.dp)
         )
 
         LazyRow (
@@ -84,25 +78,32 @@ fun HomeScreen(
             }
         }
 
-        LazyColumn (
-            modifier = Modifier,
-            contentPadding = PaddingValues(top = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(
-                items = state.fakeItem,
-                key = { it.id },
-                contentType = { it::class.java }
-            ) {
-                HomeFeedItem(
-                    item = it,
-                    nickname = "test",
-                    parser = parser,
-                    theme = theme,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                )
+        when(val state = state.feedItem) {
+            is UiState.Success -> {
+                LazyColumn (
+                    modifier = Modifier,
+                    contentPadding = PaddingValues(top = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(
+                        items = state.data,
+                    ) {
+                        HomeFeedItem(
+                            item = it,
+                            nickname = it.authorNickname,
+                            parser = parser,
+                            theme = theme,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                        )
+                    }
+                }
             }
+            is UiState.Loading -> {
+
+            }
+            UiState.Empty -> TODO()
+            is UiState.Failure -> TODO()
         }
     }
 }

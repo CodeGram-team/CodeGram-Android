@@ -22,4 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CodeGram"
 include(":app")
- 
+include(":app:myapplication")

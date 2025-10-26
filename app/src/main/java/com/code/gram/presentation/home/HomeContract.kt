@@ -6,6 +6,8 @@ import com.example.makersassignment.core.common.util.UiState
 
 //@Immutable
 data class HomeState(
-    val feedItem : UiState<FeedModel> = UiState.Loading,
-    val fakeItem : List<FeedModel> = emptyList()
+    /*val feedItem : UiState<FeedModel> = UiState.Loading,
+    val fakeItem : List<FeedModel> = emptyList()*/
+
+    val feedItem : UiState<List<FeedModel>> = UiState.Loading,
 )

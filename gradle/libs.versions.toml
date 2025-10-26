@@ -45,6 +45,7 @@ retrofitKotlinSerializationConverter = "1.0.0"
 # Google
 googleid = "1.1.1"
 credentials = "1.5.0"
+material = "1.13.0"
 
 [libraries]
 compose-code-editor = { module = "io.github.qawaz:compose-code-editor", version.ref = "composeCodeEditor" }
@@ -97,6 +98,7 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
