@@ -5,8 +5,8 @@ import com.code.gram.core.common.util.suspendRunCatching
 import com.code.gram.data.datasource.AuthRemoteDataSource
 import com.code.gram.data.datasource.GoogleAuthDataSource
 import com.code.gram.data.datasource.TokenManager
-import com.code.gram.data.dto.LoginRequestDto
-import com.code.gram.data.dto.SignUpRequestDto
+import com.code.gram.data.dto.request.LoginRequestDto
+import com.code.gram.data.dto.request.SignUpRequestDto
 import com.code.gram.domain.entity.LoginEntity
 import com.code.gram.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
