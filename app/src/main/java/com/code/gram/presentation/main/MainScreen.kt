@@ -3,8 +3,6 @@ package com.code.gram.presentation.main
 import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -24,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import com.code.gram.presentation.auth.navigation.authGraph
 import com.code.gram.presentation.challenge.navigation.challengeGraph
 import com.code.gram.presentation.home.navigation.homeGraph
+import com.code.gram.presentation.home.navigation.navigateHome
 import com.code.gram.presentation.main.component.MainBottomBar
 import com.code.gram.presentation.mypage.navigation.myPageGraph
 import com.code.gram.presentation.post.navigation.postGraph
@@ -113,12 +112,13 @@ fun MainScreen(
 
             challengeGraph(
                 paddingValues = innerPadding,
+                navController = navigator.navController,
                 navigateUp = navigator::navigateUp,
             )
 
             postGraph(
                 paddingValues = innerPadding,
-                navigateUp = navigator::navigateUp,
+                navigateToHome = { navigator.navController.navigateHome(navOptions = null) },
             )
 
             myPageGraph(

@@ -4,7 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import com.code.gram.R
-import com.code.gram.presentation.challenge.navigation.Challenge
+import com.code.gram.presentation.challenge.list.navigation.ChallengeList
+import com.code.gram.presentation.challenge.navigation.ChallengeGraph
 import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.mypage.navigation.MyPage
 import com.code.gram.presentation.post.navigation.Post
@@ -39,11 +40,12 @@ enum class MainTab(
         route = Post,
     ),
 
+
     CHANLLENGE(
         selectedIcon = R.drawable.ic_challenge,
         unselectedIcon = R.drawable.ic_challenge_filled,
         contentDescription = R.string.ic_challenge_description,
-        route = Challenge,
+        route = ChallengeList,
     ),
 
     MYPAGE(

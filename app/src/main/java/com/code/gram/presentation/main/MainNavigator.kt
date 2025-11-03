@@ -9,7 +9,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.code.gram.presentation.auth.navigation.Auth
-import com.code.gram.presentation.challenge.navigation.navigateChallenge
+import com.code.gram.presentation.challenge.navigation.navigateChallengeGraph
+import com.code.gram.presentation.challenge.navigation.navigateChallengeList
 import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.home.navigation.navigateHome
 import com.code.gram.presentation.mypage.navigation.navigateMyPage
@@ -23,7 +24,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = Home
+    val startDestination = Auth
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
@@ -46,7 +47,7 @@ class MainNavigator(
             MainTab.HOME -> navController.navigateHome(navOptions)
             MainTab.SEARCH -> navController.navigateSearch(navOptions)
             MainTab.MYPAGE -> navController.navigateMyPage(navOptions)
-            MainTab.CHANLLENGE -> navController.navigateChallenge(navOptions)
+            MainTab.CHANLLENGE -> navController.navigateChallengeList(navOptions)
             MainTab.POST -> navController.navigatePost(navOptions)
         }
     }
