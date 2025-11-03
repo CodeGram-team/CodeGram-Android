@@ -1,6 +1,7 @@
 package com.code.gram.core.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +31,8 @@ fun CommonTextField(
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color.Gray,
     isPasswordVisible: Boolean = false,
+    isEnable: Boolean = true,
+    onClickTextField : () -> Unit = {},
     placeHolder: String = "닉네임을 작성해주세요",
     suffix: (@Composable () -> Unit)? = null,
     prefix: (@Composable () -> Unit)? = null,
@@ -38,9 +42,18 @@ fun CommonTextField(
         onValueChange = onTextChange,
         modifier = modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(8.dp))
-            .padding(12.dp),
+            .padding(12.dp)
+            .clickable(
+                enabled = !isEnable,
+                onClick = onClickTextField
+            ),
         visualTransformation = VisualTransformation.None,
         singleLine = true,
+        enabled = isEnable,
+        textStyle = TextStyle(
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        ),
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier

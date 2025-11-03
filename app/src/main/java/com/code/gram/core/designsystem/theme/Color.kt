@@ -25,6 +25,8 @@ val ContainerBackground = Color(0xFF232427)
 val textFieldBackground = Color(0xFF303237)
 val itemBackground =  Color(0xFF767680)
 
+val BackgroundDim = Color(0xCC0F0F12)
+val Gray800 = Color(0xFF202025)
 val SurfaceBackground = Color(0xFFFAFBFC)
 val SurfaceCard = Color(0xFFFFFFFF)
 val SurfaceContainer = Color(0xFFF1F5F9)

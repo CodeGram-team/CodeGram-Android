@@ -45,7 +45,7 @@ fun CodeGramTextField(
                             text = placeholder,
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            color = Color.White
+                            color = Color.LightGray
                         )
                     }
                     innerTextField()
