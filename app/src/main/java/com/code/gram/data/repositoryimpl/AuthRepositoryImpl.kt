@@ -6,10 +6,12 @@ import com.code.gram.data.datasource.AuthRemoteDataSource
 import com.code.gram.data.datasource.GoogleAuthDataSource
 import com.code.gram.data.datasource.TokenManager
 import com.code.gram.data.dto.request.LoginRequestDto
+import com.code.gram.data.dto.request.RefreshRequest
 import com.code.gram.data.dto.request.SignUpRequestDto
 import com.code.gram.domain.entity.LoginEntity
 import com.code.gram.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,14 +30,26 @@ class AuthRepositoryImpl @Inject constructor(
             val loginEntity = loginResponse.body()?.toDomain() ?: throw Exception("Response body is null")
             if (loginEntity.status == "signup") {
                 Timber.e("signupImpl, $loginEntity")
-                tokenManager.saveAccessToken(loginEntity.accessToken)
-                tokenManager.saveRefreshToken(loginEntity.refreshToken)
+                tokenManager.saveAccessToken(
+                    loginEntity.accessToken,
+                    loginEntity.expiresTime
+                )
+                tokenManager.saveRefreshToken(
+                    loginEntity.refreshToken,
+                    loginEntity.expiresTime
+                )
                 tokenManager.saveSignUpToken(loginEntity.signupToken)
                 loginEntity
             } else {
                 Timber.e("signupImplfail, $loginEntity")
-                tokenManager.saveAccessToken(loginEntity.accessToken)
-                tokenManager.saveRefreshToken(loginEntity.refreshToken)
+                tokenManager.saveAccessToken(
+                    loginEntity.accessToken,
+                    loginEntity.expiresTime
+                )
+                tokenManager.saveRefreshToken(
+                    loginEntity.refreshToken,
+                    loginEntity.expiresTime
+                )
                 tokenManager.saveSignUpToken(loginEntity.signupToken)
                 loginEntity
             }
@@ -49,8 +63,14 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authRemoteDataSource.signUp(body)
         if (response.isSuccessful) {
             val loginEntity = response.body()?.toDomain() ?: throw Exception("Response body is null")
-            tokenManager.saveAccessToken(loginEntity.accessToken)
-            tokenManager.saveRefreshToken(loginEntity.refreshToken)
+            tokenManager.saveAccessToken(
+                loginEntity.accessToken,
+                loginEntity.expiresTime
+            )
+            tokenManager.saveRefreshToken(
+                loginEntity.refreshToken,
+                loginEntity.expiresTime
+            )
             return Result.success(loginEntity)
         } else {
             throw Exception("Login failed: ${response.errorBody()?.string()}")
@@ -59,5 +79,29 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun getSignUpToken(): Flow<String?> {
         return tokenManager.getSignUpToken()
+    }
+
+    override suspend fun refreshToken(refreshToken : String?): Result<LoginEntity> = suspendRunCatching {
+        val refreshToken = tokenManager.getRefreshToken().firstOrNull()
+            ?: throw Exception("No refresh token found")
+
+        val isExpired = tokenManager.isRefreshTokenExpired().firstOrNull() ?: true
+        if (isExpired) throw Exception("Refresh token expired, please login again")
+
+        val refreshTokenRequest = RefreshRequest(refreshToken)
+        val response = authRemoteDataSource.refreshToken(refreshTokenRequest)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to refresh token: ${response.errorBody()?.string()}")
+        }
+
+        val loginEntity = response.body()?.toDomain() ?: throw Exception("Response body is null")
+
+        tokenManager.saveAccessToken(
+            loginEntity.accessToken, loginEntity.expiresTime
+        )
+        tokenManager.saveRefreshToken(
+            loginEntity.refreshToken, loginEntity.expiresTime)
+
+        loginEntity
     }
 }

@@ -14,10 +14,12 @@ data class AuthResponse(
     val refreshToken: String = "",
     @SerialName("signup_token")
     val signupToken: String = "",
+    @SerialName("expires_time")
+    val expiresTime: Long,
     @SerialName("token_type")
     val tokenType: String
 ) {
     fun toDomain(): LoginEntity {
-        return LoginEntity(status, accessToken, refreshToken, signupToken, tokenType)
+        return LoginEntity(status, accessToken, refreshToken, signupToken,expiresTime,tokenType)
     }
 }

@@ -10,4 +10,6 @@ interface AuthRepository {
 
     suspend fun serverLogin(signUpToken: String, nickname: String): Result<LoginEntity>
     fun getSignUpToken(): Flow<String?>
+
+    suspend fun refreshToken(refreshToken: String?): Result<LoginEntity>
 }
