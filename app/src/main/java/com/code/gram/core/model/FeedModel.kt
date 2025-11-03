@@ -1,7 +1,9 @@
-package com.code.gram.presentation.home.model
+package com.code.gram.core.model
 
 import androidx.compose.runtime.Immutable
 import com.code.gram.domain.entity.home.CodeResponseEntity
+import com.code.gram.presentation.home.model.CommentUiModel
+import com.code.gram.presentation.home.model.toUiModel
 
 @Immutable
 data class FeedModel(
@@ -17,7 +19,8 @@ data class FeedModel(
     val vibeEmojis: List<String>,
     val likesCount: Int,
     val comments: List<CommentUiModel>,
-    val createdAt: String
+    val createdAt: String,
+    val isFavorite : Boolean = false,
 )
 
 fun CodeResponseEntity.toUiModel() = FeedModel(
