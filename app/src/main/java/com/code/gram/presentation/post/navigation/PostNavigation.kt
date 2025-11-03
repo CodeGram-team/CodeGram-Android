@@ -17,12 +17,12 @@ fun NavController.navigatePost(
 
 fun NavGraphBuilder.postGraph(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
 ) {
     composable<Post> {
         PostRoute(
             paddingValues = paddingValues,
-            navigateUp = navigateUp
+            navigateToHome = navigateToHome
         )
     }
 }

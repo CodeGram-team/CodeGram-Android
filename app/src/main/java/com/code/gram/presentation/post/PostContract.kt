@@ -9,10 +9,12 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class PostState(
     val isLoading : Boolean = false,
+    val isSuccess : Boolean = false,
     val theme : String = "",
     val error : String = "",
     val type : String = "",
 
     val codeResult : String = "",
+    val userInput : String = "",
     val post : PostDataUiModel = PostDataUiModel()
 )

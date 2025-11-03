@@ -48,6 +48,11 @@ class PostViewModel @Inject constructor(
                 code = _state.value.post.code
             ).onSuccess { result ->
                 Timber.e("success ${result}")
+                _state.update {
+                    it.copy(
+                        isSuccess = true
+                    )
+                }
                 observeMessages()
             }.onFailure {
                 Timber.e("fail ${it}")
@@ -60,7 +65,7 @@ class PostViewModel @Inject constructor(
             webSocketRepository.observeJobResult().collect { result ->
                 _state.update {
                     it.copy(
-                        codeResult = "[${result.type}] ${result.data}"
+                        codeResult = it.codeResult + "\n[${result.type}] ${result.data}"
                     )
                 }
                 Timber.e("result ${result}")
@@ -68,13 +73,27 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun sendInput(input: String) {
+    fun sendInput() {
+        val input = _state.value.userInput
         webSocketRepository.sendInput(input)
+        _state.update {
+            it.copy(
+                userInput = ""
+            )
+        }
     }
 
     override fun onCleared() {
         webSocketRepository.disconnect()
         super.onCleared()
+    }
+
+    fun onInputChanged(input: String) {
+        _state.update {
+            it.copy(
+                userInput = input
+            )
+        }
     }
 
     fun updateCode(code : String) {
@@ -108,6 +127,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun updateLanguage(language : CodeLang) {
+        Timber.e("language ${language.name}")
         _state.update {
             it.copy(
                 post = it.post.copy(

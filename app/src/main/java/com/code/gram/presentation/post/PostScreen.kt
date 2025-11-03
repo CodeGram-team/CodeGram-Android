@@ -36,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -71,11 +73,12 @@ import com.wakaztahir.codeeditor.highlight.theme.CodeTheme
 import com.wakaztahir.codeeditor.highlight.theme.CodeThemeType
 import com.wakaztahir.codeeditor.highlight.utils.parseCodeAsAnnotatedString
 import kotlinx.coroutines.launch
+import kotlin.sequences.ifEmpty
 
 @Composable
 fun PostRoute(
     paddingValues: PaddingValues,
-    navigateUp: () -> Unit,
+    navigateToHome: () -> Unit,
     viewModel: PostViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -98,9 +101,12 @@ fun PostRoute(
         onTagChange = viewModel::updateTag,
         onClickComplete = viewModel::startJob, // Todo : AI 검사는 어떻게 시작?
         onPostComplete = {
-            navigateUp()
+            navigateToHome()
             viewModel.postComplete()
-        }
+        },
+        connectWebSocket = viewModel::startJob,
+        onSendInput = viewModel::sendInput,
+        onInputChanged = viewModel::onInputChanged
     )
 }
 
@@ -117,7 +123,10 @@ fun PostScreen(
     onCodeChange : (String) -> Unit,
     onTagChange : (List<String>) -> Unit,
     onClickComplete: () -> Unit,
-    onPostComplete: () -> Unit
+    onPostComplete: () -> Unit,
+    connectWebSocket : () -> Unit,
+    onSendInput : () -> Unit,
+    onInputChanged : (String) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isFullScreenEditor by remember { mutableStateOf(false) }
@@ -131,7 +140,7 @@ fun PostScreen(
             initialCode = state.post.code,
             parser = parser,
             theme = theme,
-            language = if (state.post.language == "Java") CodeLang.Java else CodeLang.Python,
+            language = state.post.codeLang ?: CodeLang.Java,
             onDone = { updatedCode ->
                 onCodeChange(updatedCode)
                 onClickComplete()
@@ -155,26 +164,36 @@ fun PostScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-
                 Text(
                     text = "새 게시물",
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                TextButton(
-                    onClick = onPostComplete
-                ) {
-                    Text(
-                        text = "공유",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color(0xFF7C9BFF)
-                    )
+                Row {
+                    TextButton(
+                        onClick = { }
+                    ) {
+                        Text(
+                            text = "공유",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF7C9BFF)
+                        )
+                    }
+
+                    TextButton(
+                        onClick = onPostComplete
+                    ) {
+                        Text(
+                            text = "완료",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF7C9BFF)
+                        )
+                    }
                 }
             }
 
@@ -306,6 +325,57 @@ fun PostScreen(
                 fontSize = 10.sp,
                 color = Color.White
             )
+
+            if (state.isSuccess) {
+                Text(
+                    text = "Output",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(textFieldBackground, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = state.codeResult.ifEmpty { "실행 결과가 여기에 표시됩니다..." },
+                        color = Color(0xFF00FF00), // 터미널 느낌의 초록색 텍스트
+                        modifier = Modifier.align(Alignment.TopStart)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = state.userInput,
+                        onValueChange = { onInputChanged(it) },
+                        label = { Text("WebSocket Input") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    )
+
+                    Button(onClick = onSendInput) {
+                        Text("Send")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { connectWebSocket() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Connect & Run")
+                }
+            }
         }
     }
 
@@ -325,7 +395,7 @@ fun PostScreen(
 }
 
 @Composable
-private fun FullScreenCodeEditor(
+fun FullScreenCodeEditor(
     paddingValues: PaddingValues,
     initialCode: String,
     parser: PrettifyParser,
