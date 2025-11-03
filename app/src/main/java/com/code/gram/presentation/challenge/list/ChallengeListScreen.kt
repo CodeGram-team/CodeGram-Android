@@ -1,4 +1,4 @@
-package com.code.gram.presentation.challenge
+package com.code.gram.presentation.challenge.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -42,24 +42,28 @@ import com.code.gram.core.designsystem.theme.PrimaryBlue
 import com.code.gram.core.designsystem.theme.Success
 import com.code.gram.core.designsystem.theme.TextTertiary
 import com.code.gram.core.designsystem.theme.textFieldBackground
-import com.code.gram.presentation.challenge.component.ChallengeItem
-import com.code.gram.presentation.challenge.model.ChallengeItemModel
-import com.code.gram.presentation.challenge.model.ChallengeLevel
-import com.code.gram.presentation.challenge.state.ChallengeState
+import com.code.gram.presentation.challenge.list.component.ChallengeItem
+import com.code.gram.presentation.challenge.list.model.ChallengeItemModel
+import com.code.gram.presentation.challenge.model.DifficultyType
+import com.code.gram.presentation.challenge.list.state.ChallengeState
+import kotlinx.collections.immutable.ImmutableList
+import timber.log.Timber
 
 @Composable
-fun ChallengeRoute(
+fun ChallengeListRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateChallengeDetail: (Int) -> Unit,
     viewModel: ChallengeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val tabs = ChallengeLevel.entries
+    val tabs = DifficultyType.entries
 
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
     }
 
-    ChallengeScreen(
+    ChallengeListScreen(
         paddingValues = paddingValues,
         state = state,
         tabs = tabs,
@@ -67,19 +71,24 @@ fun ChallengeRoute(
         onTextChange = viewModel::updateSearchQuery,
         onTabSelected = {
             selectedTabIndex = it
-        }
+            viewModel.fetchChallengeList(
+                difficulty = tabs[it]
+            )
+        },
+        onChallengeClick = navigateChallengeDetail
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChallengeScreen (
+fun ChallengeListScreen (
     paddingValues: PaddingValues,
     state: ChallengeState,
-    tabs : List<ChallengeLevel>,
+    tabs : List<DifficultyType>,
     selectedTabIndex : Int,
     onTextChange: (String) -> Unit = {},
-    onTabSelected : (Int) -> Unit = {}
+    onTabSelected : (Int) -> Unit = {},
+    onChallengeClick : (Int) -> Unit = {}
 ) {
     Column (
         modifier = Modifier
@@ -148,7 +157,7 @@ fun ChallengeScreen (
                 Tab(
                     text = {
                         Text(
-                            text = tab.displayName,
+                            text = tab.label,
                             color = if (isSelected) Color.White else Color.DarkGray,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -161,26 +170,10 @@ fun ChallengeScreen (
             }
         }
 
-        when(selectedTabIndex) {
-            0 -> { // 전체
-                EntireChallengeList(
-                    challengeList = state.challengeList,
-                    modifier = Modifier
-                )
-            }
-
-            1 -> { // easy
-
-            }
-
-            2 -> { // medium
-
-            }
-
-            3 -> { // hard
-
-            }
-        }
+        ChallengeList(
+            challengeList = state.challengeList,
+            onChallengeClick = onChallengeClick
+        )
     }
 
 }
@@ -189,6 +182,7 @@ fun ChallengeScreen (
 private fun ChallengeInfoItem(
     value : Int,
     description : String,
+    modifier: Modifier = Modifier
 ) {
     val text = if (description == "정답률") {
         "$value%"
@@ -209,7 +203,7 @@ private fun ChallengeInfoItem(
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .padding(vertical = 16.dp)
     ) {
         Text(
@@ -227,8 +221,9 @@ private fun ChallengeInfoItem(
 }
 
 @Composable
-fun EntireChallengeList(
-    challengeList : List<ChallengeItemModel>,
+private fun ChallengeList(
+    challengeList : ImmutableList<ChallengeItemModel>,
+    onChallengeClick : (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn (
@@ -237,13 +232,24 @@ fun EntireChallengeList(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        items(challengeList.size) { index ->
+        itemsIndexed(
+            items = challengeList,
+            key = { index, item ->
+                item.problemId
+            }
+        ) { index, item ->
             ChallengeItem(
-                title = challengeList[index].title,
-                description = challengeList[index].description,
-                type = challengeList[index].type,
-                level = challengeList[index].level.name
+                title = item.title,
+                problemId = item.problemId,
+                difficultyType = item.difficulty,
+                color = item.color,
+                levelBackgroundColor = item.levelBackgroundColor,
+                onChallengeClick = {
+                    onChallengeClick(item.problemId)
+                }
             )
+            Timber.d("challengeList $challengeList")
+            Timber.d("challengeList[index] ${challengeList[index].color}")
         }
     }
 }

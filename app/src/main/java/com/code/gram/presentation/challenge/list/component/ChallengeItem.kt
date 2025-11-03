@@ -1,4 +1,4 @@
-package com.code.gram.presentation.challenge.component
+package com.code.gram.presentation.challenge.list.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,33 +30,18 @@ import com.code.gram.core.designsystem.theme.Success
 import com.code.gram.core.designsystem.theme.SuccessDark
 import com.code.gram.core.designsystem.theme.Warning
 import com.code.gram.core.designsystem.theme.WarningDark
-import com.code.gram.presentation.challenge.EntireChallengeList
-import com.code.gram.presentation.challenge.model.ChallengeItemModel
-import com.code.gram.presentation.challenge.model.ChallengeLevel
+import com.code.gram.presentation.challenge.model.DifficultyType
 
 @Composable
 fun ChallengeItem(
     title : String,
-    description : String,
-    type : String,
-    level : String,
+    problemId : Int,
+    difficultyType: DifficultyType,
+    color : Color = Success,
+    levelBackgroundColor : Color = SuccessDark,
     modifier: Modifier = Modifier,
-    onClickChallenge : () -> Unit = {}
+    onChallengeClick : () -> Unit = {}
 ) {
-    val levelColor = when(level) {
-        ChallengeLevel.Easy.name -> Success
-        ChallengeLevel.Medium.name -> Warning
-        ChallengeLevel.Hard.name -> Error
-        else -> Success
-    }
-
-    val levelBackgroundColor = when(level) {
-        ChallengeLevel.Easy.name -> SuccessDark
-        ChallengeLevel.Medium.name -> WarningDark
-        ChallengeLevel.Hard.name -> ErrorDark
-        else -> SuccessDark
-    }
-
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -68,7 +53,7 @@ fun ChallengeItem(
     ) {
         Row {
             Text(
-                text = title,
+                text = "$title (${problemId})",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
@@ -77,8 +62,8 @@ fun ChallengeItem(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = level,
-                color = levelColor,
+                text = difficultyType.label,
+                color = color,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 modifier = Modifier
@@ -91,7 +76,7 @@ fun ChallengeItem(
                     )
                     .border(
                         width = 1.dp,
-                        color = levelColor,
+                        color = color,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(horizontal = 16.dp),
@@ -99,19 +84,7 @@ fun ChallengeItem(
             )
         }
 
-        Text(
-            text = description,
-            color = Color.LightGray,
-            fontSize = 14.sp
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = type,
-            color = Color.DarkGray,
-            fontSize = 12.sp
-        )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "도전하기",
@@ -126,7 +99,7 @@ fun ChallengeItem(
                 )
                 .padding(horizontal = 18.dp, vertical = 4.dp)
                 .align(Alignment.End)
-                .noRippleClickable(onClick = onClickChallenge),
+                .noRippleClickable(onClick = onChallengeClick),
             textAlign = TextAlign.End
         )
     }
@@ -138,37 +111,9 @@ fun ChallengeItem(
 private fun ChallengeItemPreview() {
     CodeGramTheme {
         ChallengeItem(
-            title = "코딩테스트",
-            description = "코딩테스트를 해볼까요?",
-            type = "Array",
-            level = "Easy"
+            title = "Challenge Title",
+            problemId = 1,
+            difficultyType = DifficultyType.INTRODUCTORY
         )
     }
-}
-
-@Preview
-@Composable
-private fun ChallengeListPreview() {
-    EntireChallengeList(
-        challengeList = listOf(
-            ChallengeItemModel(
-                title = "코딩테스트",
-                description = "코딩테스트를 해볼까요?",
-                level = ChallengeLevel.Easy,
-                type = "Array"
-            ),
-            ChallengeItemModel(
-                title = "코딩테스트",
-                description = "코딩테스트를 해볼까요?",
-                level = ChallengeLevel.Easy,
-                type = "Array"
-            ),
-            ChallengeItemModel(
-                title = "코딩테스트",
-                description = "코딩테스트를 해볼까요?",
-                level = ChallengeLevel.Easy,
-                type = "Array"
-            ),
-        ),
-    )
 }
