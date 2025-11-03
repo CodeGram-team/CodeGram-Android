@@ -2,13 +2,12 @@ package com.code.gram.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.code.gram.core.model.FeedModel
+import com.code.gram.core.model.toUiModel
 import com.code.gram.domain.repository.HomeRepository
-import com.code.gram.presentation.home.model.FeedModel
-import com.code.gram.presentation.home.model.toUiModel
+import com.code.gram.domain.repository.WebSocketRepository
 import com.example.makersassignment.core.common.util.UiState
-import com.wakaztahir.codeeditor.highlight.model.CodeLang
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,29 +19,195 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val webSocketRepository: WebSocketRepository
 ) : ViewModel() {
     private val _state : MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
     val state : StateFlow<HomeState> = _state.asStateFlow()
 
     init {
-        initFetchData()
+        fetchData()
     }
 
-    fun initFetchData() {
+    fun fetchData() {
+        _state.update {
+            it.copy(
+                feedItem = UiState.Loading,
+                isLoading = true
+            )
+        }
         viewModelScope.launch {
-            homeRepository.getPosts()
+            val page = _state.value.page
+
+            homeRepository.getPosts(page)
                 .onSuccess { result ->
                     _state.update { currentState ->
+                        val newItems = when (val currentFeed = currentState.feedItem) {
+                            is UiState.Success -> currentFeed.data + result.map { it.toUiModel() }
+                            else -> result.map { it.toUiModel() }
+                        }
+
                         currentState.copy(
-                            feedItem = UiState.Success(result.map { it.toUiModel() }.toImmutableList())
+                            feedItem = UiState.Success(newItems.toImmutableList()),
+                            isLoading = false
                         )
                     }
                     Timber.e(result.toString())
                 }
                 .onFailure { e ->
                     Timber.e(e.message.toString())
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
                 }
+        }
+    }
+
+    fun updatePage() {
+        _state.update {
+            it.copy(
+                page = if (it.page <= 2) {
+                    it.page + 1
+                } else {
+                    it.page
+                }
+            )
+        }
+    }
+
+    fun fetchFavorite(
+        postId: String
+    ) {
+        viewModelScope.launch {
+            homeRepository.postLike(postId)
+                .onSuccess { result ->
+                    _state.update { currentState ->
+                        val currentFeedState = currentState.feedItem
+                        if (currentFeedState is UiState.Success) {
+
+                            val currentList = currentFeedState.data
+
+                            val updatedList = currentList.map { feedModel ->
+                                if (feedModel.id == postId) {
+                                    feedModel.copy(
+                                        isFavorite = result.userHasLiked,
+                                        likesCount = result.likeCount
+                                    )
+                                } else {
+                                    feedModel
+                                }
+                            }
+
+                            currentState.copy(
+                                feedItem = UiState.Success(updatedList)
+                            )
+                        } else {
+                            currentState
+                        }
+                    }
+                }
+                .onFailure {
+                    Timber.e(it.message.toString())
+                }
+        }
+    }
+
+    fun sendComment(
+        content: String,
+        postId: String
+    ) {
+        viewModelScope.launch {
+            homeRepository.postComment(postId, content)
+                .onSuccess { result ->
+                    Timber.e("sendComment success: ${result.comments}")
+
+                    _state.update { currentState ->
+                        val currentFeedState = currentState.feedItem
+
+                        if (currentFeedState is UiState.Success) {
+                            val currentList = currentFeedState.data
+
+                            val updatedList = currentList.map { feedModel ->
+                                if (feedModel.id == postId) {
+                                    result.toUiModel()
+                                } else {
+                                    feedModel
+                                }
+                            }
+
+                            currentState.copy(
+                                feedItem = UiState.Success(updatedList)
+                            )
+                        } else {
+                            currentState
+                        }
+                    }
+                }
+                .onFailure {
+                    Timber.e(it.message.toString())
+                }
+        }
+    }
+
+
+
+    fun startJob(feedItem: FeedModel) {
+        _state.update {
+            it.copy(
+                codeResult = ""
+            )
+        }
+        viewModelScope.launch {
+            webSocketRepository.startJob(
+                language = feedItem.language,
+                code = feedItem.code
+            ).onSuccess { result ->
+                Timber.e("success ${result}")
+                _state.update {
+                    it.copy(
+                        isSuccess = true
+                    )
+                }
+                observeMessages()
+            }.onFailure {
+                Timber.e("fail ${it}")
+            }
+        }
+    }
+
+    private fun observeMessages() {
+        viewModelScope.launch {
+            webSocketRepository.observeJobResult().collect { result ->
+                _state.update {
+                    it.copy(
+                        codeResult = it.codeResult + "\n[${result.type}] ${result.data}"
+                    )
+                }
+                Timber.e("result ${result}")
+            }
+        }
+    }
+
+    fun sendInput() {
+        val input = _state.value.userInput
+        webSocketRepository.sendInput(input)
+        _state.update {
+            it.copy(
+                userInput = ""
+            )
+        }
+    }
+
+    override fun onCleared() {
+        webSocketRepository.disconnect()
+        super.onCleared()
+    }
+
+    fun onInputChanged(input: String) {
+        _state.update {
+            it.copy(
+                userInput = input
+            )
         }
     }
 }
