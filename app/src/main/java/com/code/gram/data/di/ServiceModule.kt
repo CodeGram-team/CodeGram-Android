@@ -1,7 +1,10 @@
 package com.code.gram.data.di
 
+import com.code.gram.data.service.ChallengeService
 import com.code.gram.data.service.HomeService
 import com.code.gram.data.service.LoginService
+import com.code.gram.data.service.ProfileService
+import com.code.gram.data.service.SearchService
 import com.code.gram.data.service.WebSocketService
 import dagger.Module
 import dagger.Provides
@@ -27,6 +30,21 @@ object ServiceModule {
     @Provides
     @Singleton
     fun homeService(retrofit: Retrofit): HomeService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun challengeService(retrofit: Retrofit): ChallengeService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun searchService(retrofit: Retrofit): SearchService =
+        retrofit.create()
+
+    @Provides
+    @Singleton
+    fun profileService(retrofit: Retrofit): ProfileService =
         retrofit.create()
 
 }
