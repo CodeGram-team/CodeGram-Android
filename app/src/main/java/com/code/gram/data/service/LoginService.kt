@@ -2,6 +2,7 @@ package com.code.gram.data.service
 
 import com.code.gram.data.dto.response.AuthResponse
 import com.code.gram.data.dto.request.LoginRequestDto
+import com.code.gram.data.dto.request.RefreshRequest
 import com.code.gram.data.dto.request.SignUpRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -19,4 +20,8 @@ interface LoginService {
         @Body body: SignUpRequestDto,
     ) : Response<AuthResponse>
 
+    @POST("api/v1/refresh")
+    suspend fun refreshToken(
+        @Body refreshToken: RefreshRequest,
+    ) : Response<AuthResponse>
 }
