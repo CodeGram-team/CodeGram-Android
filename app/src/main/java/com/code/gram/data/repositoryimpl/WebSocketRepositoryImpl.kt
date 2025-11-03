@@ -23,7 +23,7 @@ class WebSocketRepositoryImpl @Inject constructor(
         val response = webSocket.startJob(language, code)
         if (response.isSuccessful) {
             val webSocketEntity = response.body()?.toDomain() ?: throw Exception("Response body is null")
-            webSocketManager.connect(webSocketEntity.webSocketUrl)
+            webSocketManager.connect(webSocketEntity.webSocketUrl, code)
             webSocketEntity
         } else {
             throw Exception("Login failed: ${response.errorBody()?.string()}")
