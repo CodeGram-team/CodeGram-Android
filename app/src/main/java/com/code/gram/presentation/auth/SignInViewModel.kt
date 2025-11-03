@@ -3,6 +3,7 @@ package com.code.gram.presentation.auth
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.code.gram.domain.repository.AuthRepository
 import com.code.gram.domain.usecase.auth.GetInfoUseCase
 import com.code.gram.domain.usecase.auth.PostGoogleSignInUseCase
 import com.code.gram.domain.usecase.auth.PostLoginUseCase
@@ -28,7 +29,8 @@ class SignInViewModel @Inject constructor(
     private val postLoginUseCase: PostLoginUseCase,
     private val postGoogleSignInUseCase: PostGoogleSignInUseCase,
     private val postServerLoginUseCase: PostServerLoginUseCase,
-    private val getSignUpTokenUseCase: GetInfoUseCase
+    private val getSignUpTokenUseCase: GetInfoUseCase,
+    private val repository: AuthRepository
 ) : ViewModel() {
     private val _state : MutableStateFlow<SignUpState> = MutableStateFlow(SignUpState())
     val state : StateFlow<SignUpState> = _state.asStateFlow()
@@ -44,7 +46,11 @@ class SignInViewModel @Inject constructor(
             initialValue = ""
         )
 
-    var test = ""
+    private var signUpToken = ""
+
+    init {
+        refreshLogin()
+    }
 
     fun onTextChanged(nickname: String) {
        _state.update {
@@ -61,7 +67,7 @@ class SignInViewModel @Inject constructor(
                         .onSuccess { authResult ->
                             Timber.d("Auth Result: $authResult")
                             if (authResult.status == "signup") {
-                                test = authResult.signupToken
+                                signUpToken = authResult.signupToken
                                 _state.update {
                                     it.copy(isVisibleNickName = true)
                                 }
@@ -82,9 +88,22 @@ class SignInViewModel @Inject constructor(
     fun signUp() {
         Timber.d("SignUp Token: ${signupToken.value}")
         viewModelScope.launch {
-            postServerLoginUseCase(test, _state.value.nickname)
+            postServerLoginUseCase(signUpToken, _state.value.nickname)
                 .onSuccess {
                     Timber.d("Server Login Result: $it")
+                    _authSideEffect.emit(AuthSideEffect.NavigateHome)
+                }
+                .onFailure {
+                    Timber.e(it)
+                }
+        }
+    }
+
+    fun refreshLogin() {
+        viewModelScope.launch {
+            repository.refreshToken(null)
+                .onSuccess {
+                    Timber.d("Refresh Login Result: $it")
                     _authSideEffect.emit(AuthSideEffect.NavigateHome)
                 }
                 .onFailure {

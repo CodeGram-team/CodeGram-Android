@@ -1,11 +1,15 @@
 package com.code.gram.presentation.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -22,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -80,44 +85,75 @@ fun SignInScreen(
     onSignUpClick: () -> Unit,
     onClickGoogleSignIn: () -> Unit,
 ) {
+    var isTitleMoved by remember { mutableStateOf(false) }
+
+    // 타이틀 이동 애니메이션
+    val titleOffsetY by androidx.compose.animation.core.animateDpAsState(
+        targetValue = if (isTitleMoved) 0.dp else 200.dp, // 아래에서 위로 이동
+        animationSpec = androidx.compose.animation.core.tween(
+            durationMillis = 800,
+            easing = androidx.compose.animation.core.FastOutSlowInEasing
+        ),
+        label = "titleOffset"
+    )
+
+    // 1초 후 애니메이션 시작
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(1000)
+        isTitleMoved = true
+    }
+
     Column (
         modifier = Modifier
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Codegram",
-            fontWeight = FontWeight.Bold,
-            fontSize = 36.sp,
-            color = Color.White
+        Image(
+            painter = painterResource(R.drawable.ic_title),
+            contentDescription = null,
+            modifier = Modifier
+                .offset(y = titleOffsetY)
+                .fillMaxWidth()
+                .size(100.dp, 150.dp)
+                .padding(top = 16.dp, start = 20.dp, end = 20.dp),
+            alignment = Alignment.Center
         )
 
         if (!isVisibleNickName) {
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = onClickGoogleSignIn,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = SurfaceCard,
-                    contentColor = TextPrimary
-                )
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isTitleMoved,
+                enter = androidx.compose.animation.fadeIn(
+                    animationSpec = androidx.compose.animation.core.tween(3500)
+                ) + androidx.compose.animation.expandVertically(),
+                exit = androidx.compose.animation.fadeOut()
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_signup_google),
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-                Text(
-                    text = "Sign In with Google",
-                    fontSize = 16.sp,
+                Button(
+                    onClick = onClickGoogleSignIn,
                     modifier = Modifier
-                        .padding(start = 8.dp),
-                    textAlign = TextAlign.Center
-                )
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .padding(bottom = 30.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SurfaceCard,
+                        contentColor = TextPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_signup_google),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                    Text(
+                        text = "Sign In with Google",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(start = 8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         } else {
             NickNameSignUpScreen(
