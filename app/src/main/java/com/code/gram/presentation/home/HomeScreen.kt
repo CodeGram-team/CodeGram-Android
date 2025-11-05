@@ -3,7 +3,6 @@ package com.code.gram.presentation.home
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,11 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,17 +24,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.code.gram.core.designsystem.component.CodeGramBottomSheet
 import com.code.gram.core.designsystem.component.CodeGramTopBar
 import com.code.gram.core.designsystem.component.CommentBottomDialog
 import com.code.gram.core.designsystem.component.FeedItem
 import com.code.gram.core.model.FeedModel
-import com.code.gram.presentation.home.model.CommentUiModel
+import com.code.gram.presentation.home.component.SortTypeContent
+import com.code.gram.presentation.home.model.SortType
 import com.example.makersassignment.core.common.util.UiState
 import com.wakaztahir.codeeditor.highlight.prettify.PrettifyParser
 import com.wakaztahir.codeeditor.highlight.theme.CodeTheme
@@ -50,6 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
+    navigateToProfile: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -82,7 +80,6 @@ fun HomeRoute(
         viewModel.fetchData()
     }
 
-
     HomeScreen(
         paddingValues = paddingValues,
         homeState = state,
@@ -95,10 +92,16 @@ fun HomeRoute(
         onInputChanged = viewModel::onInputChanged,
         onSendInput = viewModel::sendInput,
         onClickFavorite = viewModel::fetchFavorite,
-        onSendComment = viewModel::sendComment
+        onSendComment = viewModel::sendComment,
+        onClickProfile = navigateToProfile,
+        onSelectedSortType = {
+            viewModel.updateSortType(it)
+            viewModel.fetchData()
+        }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
@@ -112,10 +115,13 @@ fun HomeScreen(
     onSendInput : () -> Unit = {},
     onClickFavorite: (String) -> Unit = {},
     onSendComment: (String,String) -> Unit,
+    onClickProfile: (String) -> Unit = {},
+    onSelectedSortType : (SortType) -> Unit = {}
 ) {
     var flippedIndices by remember { mutableStateOf(persistentSetOf<Int>()) }
     var playedIndices by remember { mutableIntStateOf(-1) }
     var selectedPostIdForComment by remember { mutableStateOf<String?>(null) }
+    var isOpenBottomSheet by remember { mutableStateOf(false) }
 
     val onFlipToggle: (Int) -> Unit = { index ->
         flippedIndices = if (flippedIndices.contains(index)) {
@@ -138,8 +144,13 @@ fun HomeScreen(
             .padding(paddingValues)
     ) {
         CodeGramTopBar(
+            type = homeState.sortType.name,
             modifier = Modifier
-                .padding(top = 8.dp, bottom = 16.dp)
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+            onClick = {
+                isOpenBottomSheet = true
+            }
         )
 
         when(currentFeedState) {
@@ -178,6 +189,9 @@ fun HomeScreen(
                             onClickComment = {
                                 selectedPostIdForComment = item.id
                             },
+                            onClickProfile = {
+                                onClickProfile(item.authorNickname)
+                            }
                         )
                     }
 
@@ -220,5 +234,20 @@ fun HomeScreen(
                 }
             }
         )
+    }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    if (isOpenBottomSheet) {
+        CodeGramBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { isOpenBottomSheet = false }
+        ) {
+            SortTypeContent(
+                selectSortType = {
+                    onSelectedSortType(it)
+                    isOpenBottomSheet = false
+                }
+            )
+        }
     }
 }

@@ -89,7 +89,8 @@ fun FeedItem(
     homeState : HomeState? = null,
     searchState: SearchState? = null,
     onClickFavorite: () -> Unit = {},
-    onClickComment: () -> Unit = {}
+    onClickComment: () -> Unit = {},
+    onClickProfile: () -> Unit = {}
 ) {
     val rotationY by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
@@ -128,7 +129,8 @@ fun FeedItem(
             Box(
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .clickable(onClick = onClickProfile),
                 contentAlignment = Alignment.Center
             ) {
                 if (item.authorProfileImageUrl != null) {

@@ -1,5 +1,7 @@
 package com.code.gram.presentation.home.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,12 +17,17 @@ fun NavController.navigateHome(
     navigate(Home, navOptions)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.homeGraph(
     paddingValues: PaddingValues,
+    navigateProfile: (String) -> Unit
 ) {
     composable<Home> {
         HomeRoute(
             paddingValues = paddingValues,
+            navigateToProfile = {
+                navigateProfile(it)
+            }
         )
     }
 }
