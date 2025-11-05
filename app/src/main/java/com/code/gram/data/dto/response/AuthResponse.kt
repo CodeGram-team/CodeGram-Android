@@ -15,7 +15,7 @@ data class AuthResponse(
     @SerialName("signup_token")
     val signupToken: String = "",
     @SerialName("expires_time")
-    val expiresTime: Long,
+    val expiresTime: Long?,
     @SerialName("token_type")
     val tokenType: String
 ) {

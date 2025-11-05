@@ -32,11 +32,11 @@ class AuthRepositoryImpl @Inject constructor(
                 Timber.e("signupImpl, $loginEntity")
                 tokenManager.saveAccessToken(
                     loginEntity.accessToken,
-                    loginEntity.expiresTime
+                    loginEntity.expiresTime ?: 1762182357
                 )
                 tokenManager.saveRefreshToken(
                     loginEntity.refreshToken,
-                    loginEntity.expiresTime
+                    loginEntity.expiresTime ?: 1762182357
                 )
                 tokenManager.saveSignUpToken(loginEntity.signupToken)
                 loginEntity
@@ -44,11 +44,11 @@ class AuthRepositoryImpl @Inject constructor(
                 Timber.e("signupImplfail, $loginEntity")
                 tokenManager.saveAccessToken(
                     loginEntity.accessToken,
-                    loginEntity.expiresTime
+                    loginEntity.expiresTime ?: 1762182357
                 )
                 tokenManager.saveRefreshToken(
                     loginEntity.refreshToken,
-                    loginEntity.expiresTime
+                    loginEntity.expiresTime ?: 1762182357
                 )
                 tokenManager.saveSignUpToken(loginEntity.signupToken)
                 loginEntity
@@ -65,11 +65,11 @@ class AuthRepositoryImpl @Inject constructor(
             val loginEntity = response.body()?.toDomain() ?: throw Exception("Response body is null")
             tokenManager.saveAccessToken(
                 loginEntity.accessToken,
-                loginEntity.expiresTime
+                loginEntity.expiresTime ?: 1762182357
             )
             tokenManager.saveRefreshToken(
                 loginEntity.refreshToken,
-                loginEntity.expiresTime
+                loginEntity.expiresTime ?: 1762182357
             )
             return Result.success(loginEntity)
         } else {
@@ -97,10 +97,10 @@ class AuthRepositoryImpl @Inject constructor(
         val loginEntity = response.body()?.toDomain() ?: throw Exception("Response body is null")
 
         tokenManager.saveAccessToken(
-            loginEntity.accessToken, loginEntity.expiresTime
+            loginEntity.accessToken, loginEntity.expiresTime ?: 1762182357
         )
         tokenManager.saveRefreshToken(
-            loginEntity.refreshToken, loginEntity.expiresTime)
+            loginEntity.refreshToken, loginEntity.expiresTime ?: 1762182357)
 
         loginEntity
     }
