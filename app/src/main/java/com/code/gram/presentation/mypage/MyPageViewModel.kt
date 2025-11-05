@@ -36,7 +36,7 @@ class MyPageViewModel @Inject constructor(
                             profileImageUrl = userInfo.profileImageUrl,
                             createdAt = userInfo.createdAt,
                             posts = userInfo.posts.map { it.toUiModel() },
-                            email = userInfo.email
+                            email = userInfo.email ?: ""
                         )
                     }
                 }

@@ -150,7 +150,7 @@ fun MyPageScreen(
 }
 
 @Composable
-private fun PostItem(
+fun PostItem(
     post : PostUiModel,
     onPostClick: () -> Unit
 ) {
