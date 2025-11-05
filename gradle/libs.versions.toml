@@ -8,6 +8,7 @@ espressoCore = "3.6.1"
 # Kotlin
 agp = "8.11.1"
 kotlin = "2.2.0"
+kotlinxCoroutinesTest = "1.10.2"
 kotlinxImmutable = "0.4.0"
 kotlinxSerializationJson = "1.9.0"
 jetbrainsKotlinJvm = "2.2.0"
@@ -18,6 +19,7 @@ lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 androidxAppCompat = "1.7.1"
+mockk = "1.14.6"
 navigation = "2.9.3"
 security = "1.1.0-alpha06"
 lifecycleRuntimeComposeAndroid = "2.9.2"
@@ -73,6 +75,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 
 # Network
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
