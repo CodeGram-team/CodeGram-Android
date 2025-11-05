@@ -5,7 +5,7 @@ import com.code.gram.domain.entity.home.CodeRequestEntity
 import com.code.gram.domain.entity.home.CodeResponseEntity
 
 interface HomeRepository {
-    suspend fun getPosts(page: Int): Result<List<CodeResponseEntity>>
+    suspend fun getPosts(page: Int, sortType: String = "latest"): Result<List<CodeResponseEntity>>
     suspend fun postCode(codeRequestEntity: CodeRequestEntity): Result<CodeResponseEntity>
 
     suspend fun postLike(postId: String): Result<LikeEntity>

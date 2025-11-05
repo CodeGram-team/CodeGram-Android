@@ -6,8 +6,10 @@ import com.code.gram.core.model.FeedModel
 import com.code.gram.core.model.toUiModel
 import com.code.gram.domain.repository.HomeRepository
 import com.code.gram.domain.repository.WebSocketRepository
+import com.code.gram.presentation.home.model.SortType
 import com.example.makersassignment.core.common.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,29 +32,25 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchData() {
-        _state.update {
-            it.copy(
-                feedItem = UiState.Loading,
-                isLoading = true
-            )
-        }
+        if (_state.value.isLoading) return
+
         viewModelScope.launch {
             val page = _state.value.page
+            val sortType = _state.value.sortType.name.lowercase()
 
-            homeRepository.getPosts(page)
+            homeRepository.getPosts(page,sortType)
                 .onSuccess { result ->
                     _state.update { currentState ->
                         val newItems = when (val currentFeed = currentState.feedItem) {
-                            is UiState.Success -> currentFeed.data + result.map { it.toUiModel() }
-                            else -> result.map { it.toUiModel() }
+                            is UiState.Success -> (currentFeed.data + result.map { it.toUiModel() }).toImmutableList()
+                            else -> result.map { it.toUiModel() }.toImmutableList()
                         }
 
                         currentState.copy(
-                            feedItem = UiState.Success(newItems.toImmutableList()),
+                            feedItem = UiState.Success(newItems),
                             isLoading = false
                         )
                     }
-                    Timber.e(result.toString())
                 }
                 .onFailure { e ->
                     Timber.e(e.message.toString())
@@ -66,11 +64,19 @@ class HomeViewModel @Inject constructor(
     fun updatePage() {
         _state.update {
             it.copy(
-                page = if (it.page <= 2) {
+                page = if (it.page < 2) {
                     it.page + 1
                 } else {
                     it.page
                 }
+            )
+        }
+    }
+
+    fun updateSortType(sortType: SortType) {
+        _state.update {
+            it.copy(
+                sortType = sortType
             )
         }
     }

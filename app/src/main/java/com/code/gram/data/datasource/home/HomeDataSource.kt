@@ -8,7 +8,7 @@ import javax.inject.Inject
 class HomeDataSource @Inject constructor(
     private val homeService: HomeService
 ) {
-    suspend fun getPosts(page: Int) = homeService.getCodeList(page = page)
+    suspend fun getPosts(page: Int, sortType: String) = homeService.getCodeList(page = page, sortBy = sortType)
 
     suspend fun postCode(codeRequest: CodeRequest) = homeService.postCode(codeRequest)
 

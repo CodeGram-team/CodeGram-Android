@@ -1,6 +1,7 @@
 package com.code.gram.presentation.home
 
 import com.code.gram.core.model.FeedModel
+import com.code.gram.presentation.home.model.SortType
 import com.example.makersassignment.core.common.util.UiState
 
 //@Immutable
@@ -14,4 +15,5 @@ data class HomeState(
     val codeResult : String= "",
     val userInput : String = "",
     val isLoading : Boolean = false,
+    val sortType : SortType = SortType.Latest
 )
