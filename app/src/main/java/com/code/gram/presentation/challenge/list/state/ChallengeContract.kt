@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ChallengeState(
+    val sourceChallengeList: ImmutableList<ChallengeItemModel> = persistentListOf(),
     val challengeList : ImmutableList<ChallengeItemModel> = persistentListOf(),
     val query : String = "",
 )

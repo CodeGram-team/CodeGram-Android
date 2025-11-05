@@ -99,7 +99,6 @@ fun ChallengeListScreen (
         CommonTextField(
             text = state.query,
             onTextChange = onTextChange,
-            modifier = Modifier,
             backgroundColor = textFieldBackground,
             placeHolder = "Search",
             prefix = {
@@ -107,12 +106,12 @@ fun ChallengeListScreen (
                     imageVector = Icons.Default.Search,
                     contentDescription = null
                 )
-            }
+            },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        //Spacer(modifier = Modifier.height(16.dp))
 
-        Row (
+        /*Row (
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
@@ -136,7 +135,7 @@ fun ChallengeListScreen (
                     } as String
                 )
             }
-        }
+        }*/
 
         Spacer(modifier = Modifier.height(8.dp))
 
