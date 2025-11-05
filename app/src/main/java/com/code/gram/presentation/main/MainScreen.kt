@@ -1,8 +1,10 @@
 package com.code.gram.presentation.main
 
 import android.app.Activity
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -19,18 +21,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
 import com.code.gram.presentation.auth.navigation.authGraph
 import com.code.gram.presentation.challenge.navigation.challengeGraph
+import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.home.navigation.homeGraph
 import com.code.gram.presentation.home.navigation.navigateHome
 import com.code.gram.presentation.main.component.MainBottomBar
 import com.code.gram.presentation.mypage.navigation.myPageGraph
 import com.code.gram.presentation.post.navigation.postGraph
+import com.code.gram.presentation.profile.navigation.profileGraph
 import com.code.gram.presentation.search.navigation.searchGraph
 import kotlinx.collections.immutable.toPersistentList
 
 private const val EXIT_MILLIS = 3000L
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
@@ -103,6 +109,7 @@ fun MainScreen(
 
             homeGraph(
                 paddingValues = innerPadding,
+                navigateProfile = navigator::navigateToProfile
             )
 
             searchGraph(
@@ -118,10 +125,22 @@ fun MainScreen(
 
             postGraph(
                 paddingValues = innerPadding,
-                navigateToHome = { navigator.navController.navigateHome(navOptions = null) },
+                navigateToHome = {
+                    val navOptions = navOptions {
+                        popUpTo(Home) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = false
+                    }
+                    navigator.navController.navigateHome(navOptions = navOptions) },
             )
 
             myPageGraph(
+                paddingValues = innerPadding
+            )
+
+            profileGraph(
                 paddingValues = innerPadding
             )
         }

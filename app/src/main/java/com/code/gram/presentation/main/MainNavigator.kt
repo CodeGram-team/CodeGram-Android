@@ -15,6 +15,7 @@ import com.code.gram.presentation.home.navigation.Home
 import com.code.gram.presentation.home.navigation.navigateHome
 import com.code.gram.presentation.mypage.navigation.navigateMyPage
 import com.code.gram.presentation.post.navigation.navigatePost
+import com.code.gram.presentation.profile.navigation.navigateProfile
 import com.code.gram.presentation.search.navigation.navigateSearch
 
 class MainNavigator(
@@ -54,6 +55,12 @@ class MainNavigator(
 
     fun navigateUp() {
         navController.navigateUp()
+    }
+
+    fun navigateToProfile(
+        nickname: String
+    ) {
+        navController.navigateProfile(null, nickname)
     }
 
     fun navigateHomeFromLogin() {
