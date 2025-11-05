@@ -5,6 +5,6 @@ data class LoginEntity(
     val accessToken: String,
     val refreshToken: String,
     val signupToken: String,
-    val expiresTime: Long,
+    val expiresTime: Long?,
     val tokenType: String
 )

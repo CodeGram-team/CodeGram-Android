@@ -7,7 +7,7 @@ data class UserInfoEntity(
     val profileImageUrl: String,
     val createdAt: String,
     val posts: List<PostEntity>,
-    val email: String
+    val email: String?
 )
 
 data class PostEntity(

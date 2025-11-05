@@ -26,7 +26,7 @@ data class UserInfoResponse(
     val posts: List<Post>,
 
     @SerialName("email")
-    val email: String
+    val email: String? = null
 ) {
     fun toDomain(): UserInfoEntity {
         return UserInfoEntity(
