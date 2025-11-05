@@ -87,4 +87,6 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
 
     implementation("com.github.qawaz:compose-code-editor:2.0.3")
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
 }
