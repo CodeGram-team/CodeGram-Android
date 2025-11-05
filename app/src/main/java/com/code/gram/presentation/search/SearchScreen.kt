@@ -45,6 +45,7 @@ import com.wakaztahir.codeeditor.highlight.prettify.PrettifyParser
 import com.wakaztahir.codeeditor.highlight.theme.CodeThemeType
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -183,6 +184,7 @@ fun SearchScreen(
         SearchQueryBottomSheet(
             searchQuery = state.searchQueryUiModel,
             onValueChange = {
+                Timber.e("onValueChange ${it}")
                 onSearchQueryChange(it)
             },
             onDismiss = {

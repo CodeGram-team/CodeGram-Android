@@ -2,11 +2,11 @@ package com.code.gram.data.service
 
 import com.code.gram.data.dto.response.CodeResponse
 import retrofit2.Response
-import retrofit2.http.POST
+import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SearchService {
-    @POST("api/v1/search")
+    @GET("api/v1/search")
     suspend fun postSearch(
         @Query("vibe_emoji") vibeEmojis: List<String>? = null,
         @Query("language") language: String? = null,

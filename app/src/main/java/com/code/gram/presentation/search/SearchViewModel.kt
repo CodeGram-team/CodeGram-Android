@@ -28,6 +28,7 @@ class SearchViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun updateSearchQuery(searchQueryUiModel: SearchQueryUiModel) {
+        Timber.e("updateSearchQuery ${searchQueryUiModel}")
         _state.update {
             it.copy(
                 searchQueryUiModel = it.searchQueryUiModel.copy(
@@ -88,6 +89,7 @@ class SearchViewModel @Inject constructor(
 
     fun fetchSearch() {
         val queryState = _state.value.searchQueryUiModel
+        Timber.e("fetchSearch ${queryState}")
         viewModelScope.launch {
             repository.postSearch(
                 vibeEmojis = queryState.vibeEmojis,

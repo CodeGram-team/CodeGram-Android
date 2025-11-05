@@ -104,7 +104,6 @@ fun SearchQueryBottomSheet(
                             queryInput = ""
                             languageInput = ""
                             onValueChange(SearchQueryUiModel())
-
                         }
                     ) {
                         Icon(
