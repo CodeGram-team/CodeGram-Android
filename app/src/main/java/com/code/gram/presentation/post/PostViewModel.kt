@@ -2,6 +2,7 @@ package com.code.gram.presentation.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.code.gram.domain.exception.CodeRejectedException
 import com.code.gram.domain.repository.HomeRepository
 import com.code.gram.domain.repository.WebSocketRepository
 import com.code.gram.presentation.post.model.PostDataUiModel
@@ -31,13 +32,44 @@ class PostViewModel @Inject constructor(
                     title = _state.value.post.title,
                     description = _state.value.post.description,
                     code = _state.value.post.code,
-                    language = _state.value.post.language,
+                    language = _state.value.post.language.lowercase(),
                     tags = _state.value.post.tags
                 ).toEntity()
             ).onSuccess {
                 Timber.e("success postCode")
-            }.onFailure {
-                Timber.e(it.message.toString())
+                _state.update {
+                    it.copy(
+                        isSuccess = true,
+                        error = ""
+                    )
+                }
+            }.onFailure { throwable ->
+                if (throwable is CodeRejectedException) {
+                    Timber.e("throwable ${throwable}")
+                    val errorReasons = throwable.errorItems.map {
+                        "${it.loc.joinToString(".")} : ${it.msg}"
+                    }
+                    _state.update {
+                        it.copy(
+                            error = throwable.message ?: "코드 검증 실패",
+                            errorReasons = errorReasons
+                        )
+                    }
+                } else {
+                    Timber.e("throwable else $throwable")
+
+                    val inputValue = throwable.message
+                        ?.substringAfter("JSON input:", "")
+                        ?.trim()
+                        ?.trim('"')  // 문자열 양쪽 큰따옴표 제거
+                        ?: "코드 검증 실패"
+
+                    _state.update {
+                        it.copy(
+                            error = inputValue
+                        )
+                    }
+                }
             }
         }
     }
@@ -48,11 +80,7 @@ class PostViewModel @Inject constructor(
                 code = _state.value.post.code
             ).onSuccess { result ->
                 Timber.e("success ${result}")
-                _state.update {
-                    it.copy(
-                        isSuccess = true
-                    )
-                }
+
                 observeMessages()
             }.onFailure {
                 Timber.e("fail ${it}")
@@ -155,5 +183,17 @@ class PostViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun updateComplete() {
+        _state.update {
+            it.copy(
+                isComplete = true
+            )
+        }
+    }
+
+    fun clearData() {
+        _state.value = PostState()
     }
 }

@@ -1,5 +1,6 @@
 package com.code.gram.presentation.post
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -61,6 +63,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.code.gram.core.designsystem.component.CodeGramBottomSheet
 import com.code.gram.core.designsystem.component.CodeGramTextField
+import com.code.gram.core.designsystem.theme.Error
+import com.code.gram.core.designsystem.theme.ErrorDark
+import com.code.gram.core.designsystem.theme.ErrorLight
 import com.code.gram.core.designsystem.theme.Success
 import com.code.gram.core.designsystem.theme.SuccessDark
 import com.code.gram.core.designsystem.theme.SuccessLight
@@ -73,7 +78,6 @@ import com.wakaztahir.codeeditor.highlight.theme.CodeTheme
 import com.wakaztahir.codeeditor.highlight.theme.CodeThemeType
 import com.wakaztahir.codeeditor.highlight.utils.parseCodeAsAnnotatedString
 import kotlinx.coroutines.launch
-import kotlin.sequences.ifEmpty
 
 @Composable
 fun PostRoute(
@@ -81,6 +85,7 @@ fun PostRoute(
     navigateToHome: () -> Unit,
     viewModel: PostViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val parser = remember { PrettifyParser() }
@@ -99,14 +104,27 @@ fun PostRoute(
         /*onTagAdd = viewModel::addTag,
         onTagRemove = viewModel::removeTag*/
         onTagChange = viewModel::updateTag,
-        onClickComplete = viewModel::startJob, // Todo : AI 검사는 어떻게 시작?
+        onClickComplete = {
+            viewModel.startJob()
+            viewModel.updateComplete()
+        },
         onPostComplete = {
-            navigateToHome()
-            viewModel.postComplete()
+            if (state.post.title.isNotEmpty() && state.post.description.isNotEmpty() && state.post.code.isNotEmpty()) {
+                viewModel.postComplete()
+            } else {
+                Toast.makeText(context, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
         },
         connectWebSocket = viewModel::startJob,
         onSendInput = viewModel::sendInput,
-        onInputChanged = viewModel::onInputChanged
+        onInputChanged = viewModel::onInputChanged,
+        navigateToHome = {
+            viewModel.clearData()
+            navigateToHome
+        },
+        showToast = {
+            Toast.makeText(context, "코드를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }
     )
 }
 
@@ -126,7 +144,9 @@ fun PostScreen(
     onPostComplete: () -> Unit,
     connectWebSocket : () -> Unit,
     onSendInput : () -> Unit,
-    onInputChanged : (String) -> Unit
+    onInputChanged : (String) -> Unit,
+    showToast : () -> Unit = {},
+    navigateToHome : () -> Unit = {}
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isFullScreenEditor by remember { mutableStateOf(false) }
@@ -142,9 +162,12 @@ fun PostScreen(
             theme = theme,
             language = state.post.codeLang ?: CodeLang.Java,
             onDone = { updatedCode ->
-                onCodeChange(updatedCode)
-                onClickComplete()
-                isFullScreenEditor = false
+                if (updatedCode != "") {
+                    onCodeChange(updatedCode)
+                    isFullScreenEditor = false
+                } else {
+                    showToast()
+                }
             },
             onCancel = {
                 isFullScreenEditor = false
@@ -186,10 +209,23 @@ fun PostScreen(
                     }
 
                     TextButton(
-                        onClick = onPostComplete
+                        onClick = if (!state.isSuccess) {
+                            onPostComplete
+                        } else if (state.isComplete) {
+                            navigateToHome
+                        } else {
+                            onClickComplete
+                        }
                     ) {
                         Text(
-                            text = "완료",
+                            // 완료일 때는 서버에 postcode함 / 실행 때는 서버에 올릴 필요없이
+                            text = if (!state.isSuccess) {
+                                "완료"
+                            } else if (state.isComplete) {
+                                "종료"
+                            } else {
+                                "실행"
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF7C9BFF)
                         )
@@ -264,7 +300,7 @@ fun PostScreen(
                 )
 
                 Text(
-                    text = "코드 작성하기"
+                    text = if (state.post.code.isEmpty()) "코드 작성하기" else "작성 완료"
                 )
             }
 
@@ -274,7 +310,11 @@ fun PostScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = SuccessDark,
+                        color = if (state.error.isNotEmpty()) {
+                            ErrorDark
+                        } else {
+                            SuccessDark
+                        },
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(8.dp),
@@ -285,7 +325,11 @@ fun PostScreen(
                         .size(16.dp)
                         .clip(CircleShape)
                         .background(
-                            color = Success,
+                            color = if (state.error.isNotEmpty()) {
+                                Error
+                            } else {
+                                Success
+                            },
                             shape = CircleShape
                         )
                 )
@@ -293,10 +337,16 @@ fun PostScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "AI 보안 검사 통과",
+                    text = state.error.ifEmpty {
+                        "검사 통과"
+                    },
                     modifier = Modifier
                         .fillMaxWidth(),
-                    color = SuccessLight,
+                    color = if (state.error.isNotEmpty()) {
+                        ErrorLight
+                    } else {
+                        SuccessLight
+                    },
                     textAlign = TextAlign.Start
                 )
 
