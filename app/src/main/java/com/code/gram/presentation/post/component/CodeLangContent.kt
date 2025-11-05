@@ -22,9 +22,15 @@ import com.wakaztahir.codeeditor.highlight.model.CodeLang
 @Composable
 fun CodeLangContent (
     selectCodeLang : (CodeLang) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val languages = CodeLang.entries.toTypedArray()
+    val languages = listOf<CodeLang>(
+        CodeLang.Python,
+        CodeLang.Java,
+        CodeLang.JavaScript,
+        CodeLang.C,
+        CodeLang.CPP,
+    )
 
     LazyColumn(
         modifier = modifier
