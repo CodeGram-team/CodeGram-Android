@@ -96,7 +96,6 @@ fun HomeRoute(
         onClickProfile = navigateToProfile,
         onSelectedSortType = {
             viewModel.updateSortType(it)
-            viewModel.fetchData()
         }
     )
 }

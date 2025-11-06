@@ -27,10 +27,10 @@ class HomeViewModel @Inject constructor(
     private val _state : MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
     val state : StateFlow<HomeState> = _state.asStateFlow()
 
-    init {
+    /*init {
         fetchData()
     }
-
+*/
     fun fetchData() {
         if (_state.value.isLoading) return
 
@@ -41,13 +41,19 @@ class HomeViewModel @Inject constructor(
             homeRepository.getPosts(page,sortType)
                 .onSuccess { result ->
                     _state.update { currentState ->
-                        val newItems = when (val currentFeed = currentState.feedItem) {
-                            is UiState.Success -> (currentFeed.data + result.map { it.toUiModel() }).toImmutableList()
-                            else -> result.map { it.toUiModel() }.toImmutableList()
+                        val newItems = result.map { it.toUiModel() }.toImmutableList()
+
+                        val mergedItems = if (page == 1) {
+                            newItems
+                        } else {
+                            when (val currentFeed = currentState.feedItem) {
+                                is UiState.Success -> (currentFeed.data + newItems).toImmutableList()
+                                else -> newItems
+                            }
                         }
 
                         currentState.copy(
-                            feedItem = UiState.Success(newItems),
+                            feedItem = UiState.Success(mergedItems),
                             isLoading = false
                         )
                     }
@@ -76,11 +82,14 @@ class HomeViewModel @Inject constructor(
     fun updateSortType(sortType: SortType) {
         _state.update {
             it.copy(
-                sortType = sortType
+                sortType = sortType,
+                page = 1,
+                feedItem = UiState.Loading,
             )
         }
-    }
 
+        fetchData()
+    }
     fun fetchFavorite(
         postId: String
     ) {
