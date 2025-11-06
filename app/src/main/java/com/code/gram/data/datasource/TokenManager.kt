@@ -76,4 +76,14 @@ class TokenManager @Inject constructor(
             val expireAt = prefs[refreshTokenExpirationKey] ?: 0L
             System.currentTimeMillis() > expireAt
         }
+
+    suspend fun clearAllTokens() {
+        dataStore.edit { preferences ->
+            preferences.remove(accessTokenKey)
+            preferences.remove(refreshTokenKey)
+            preferences.remove(signupTokenKey)
+            preferences.remove(accessTokenExpirationKey)
+            preferences.remove(refreshTokenExpirationKey)
+        }
+    }
 }
