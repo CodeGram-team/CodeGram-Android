@@ -24,7 +24,7 @@ fun CodeLangContent (
     selectCodeLang : (CodeLang) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val languages = listOf<CodeLang>(
+    val languages = listOf(
         CodeLang.Python,
         CodeLang.Java,
         CodeLang.JavaScript,
@@ -61,7 +61,11 @@ private fun CodeLangItem(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = codeLang.name,
+        text = if (codeLang.name == "JavaScript") {
+            "NodeJs"
+        } else {
+            codeLang.name
+        },
         color = Color.White,
         modifier = modifier
             .fillMaxWidth()

@@ -159,7 +159,11 @@ class PostViewModel @Inject constructor(
         _state.update {
             it.copy(
                 post = it.post.copy(
-                    language = language.name
+                    language = if (language.name == "JavaScript") {
+                        "NodeJs".lowercase()
+                    } else {
+                        language.name.lowercase()
+                    }
                 )
             )
         }

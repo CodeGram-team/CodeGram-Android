@@ -86,7 +86,11 @@ class ChallengeDetailViewModel @Inject constructor(
         Timber.e("language ${language.name}")
         _state.update {
             it.copy(
-                language = language.name.lowercase()
+                language = if (language.name == "JavaScript") {
+                    "NodeJs".lowercase()
+                } else {
+                    language.name.lowercase()
+                }
             )
         }
     }
