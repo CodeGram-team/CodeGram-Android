@@ -1,6 +1,8 @@
 package com.code.gram.presentation.post
 
 import android.widget.Toast
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,13 +45,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -77,6 +83,7 @@ import com.wakaztahir.codeeditor.highlight.prettify.PrettifyParser
 import com.wakaztahir.codeeditor.highlight.theme.CodeTheme
 import com.wakaztahir.codeeditor.highlight.theme.CodeThemeType
 import com.wakaztahir.codeeditor.highlight.utils.parseCodeAsAnnotatedString
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -91,12 +98,42 @@ fun PostRoute(
     val parser = remember { PrettifyParser() }
     var themeState by remember { mutableStateOf(CodeThemeType.Default) }
     val theme = remember(themeState) { themeState.theme() }
+    var alpha by remember { mutableFloatStateOf(0f) }
+    var isChecking by remember { mutableStateOf(false) }
+    var showResult by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.error) {
+        if (state.error.isEmpty()) {
+            isChecking = false
+            showResult = false
+            return@LaunchedEffect
+        }
+
+        showResult = false       // 결과 숨김
+        isChecking = true        // 검사중 표시
+
+        alpha = 0f
+        animate(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 1500)
+        ) { value, _ ->
+            alpha = value
+        }
+        delay(3500)
+
+        isChecking = false
+        showResult = true
+    }
 
     PostScreen(
         paddingValues = paddingValues,
         state = state,
         parser = parser,
         theme = theme,
+        alpha = alpha,
+        isChecking = isChecking,
+        showResult = showResult,
         onTitleChange = viewModel::updateTitle,
         onContentChange = viewModel::updateContent,
         onLanguageChange = viewModel::updateLanguage,
@@ -135,6 +172,9 @@ fun PostScreen(
     state: PostState,
     parser: PrettifyParser,
     theme: CodeTheme,
+    alpha: Float,
+    isChecking: Boolean,
+    showResult: Boolean,
     onTitleChange : (String) -> Unit,
     onContentChange : (String) -> Unit,
     onLanguageChange : (CodeLang) -> Unit,
@@ -306,58 +346,68 @@ fun PostScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = if (state.error.isNotEmpty()) {
-                            ErrorDark
-                        } else {
-                            SuccessDark
-                        },
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(
-                            color = if (state.error.isNotEmpty()) {
-                                Error
-                            } else {
-                                Success
-                            },
-                            shape = CircleShape
+            when {
+                isChecking -> {
+                    // 검사 중 UI
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(alpha)
+                            .background(Color.Gray, RoundedCornerShape(8.dp))
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = Color.White
                         )
-                )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                Text(
-                    text = state.error.ifEmpty {
-                        "검사 통과"
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = if (state.error.isNotEmpty()) {
-                        ErrorLight
-                    } else {
-                        SuccessLight
-                    },
-                    textAlign = TextAlign.Start
-                )
+                        Text("검사 중...", color = Color.White)
+                    }
+                }
 
-                Spacer(modifier = Modifier.weight(1f))
+                showResult -> {
+                    // 검사 결과 UI
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = if (state.error.isNotEmpty()) ErrorDark else SuccessDark,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    color = if (state.error.isNotEmpty()) Error else Success,
+                                )
+                        )
 
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    tint = Color.DarkGray
-                )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = state.error.ifEmpty { "검사 통과" },
+                            color = if (state.error.isNotEmpty()) ErrorLight else SuccessLight
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = Color.DarkGray
+                        )
+                    }
+                }
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
